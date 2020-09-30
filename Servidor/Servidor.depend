@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1601504591 source:c:\users\usuario\documents\unla sistemas\2-materias sistemas segundo año\algoritmos y estructuras de datos\servidor\main.cpp
+	<iostream>
+	<stdio.h>
+	<winsock2.h>
+
