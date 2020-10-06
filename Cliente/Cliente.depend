@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1601505908 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\cliente\main.cpp
+	<iostream>
+	<stdio.h>
+	<windows.h>
+

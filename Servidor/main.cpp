@@ -6,23 +6,25 @@ using namespace std;
 
 class Servidor{
 public:
-    WSADATA wsaData;
-    SOCKET conn_socket,comm_socket;
-    SOCKET comunicacion;
-    struct sockaddr_in server;
-    struct sockaddr_in client;
+    WSADATA wsaData; //variable para inicializar la libreria winsock2
+    //socket de conexion y socket de comunicacion con el cliente
+    SOCKET conexion_socket,comunicacion_socket;
+    struct sockaddr_in servidor;//direccion del socket servidor
+    struct sockaddr_in cliente;//direccion del socket cliente
     struct hostent *hp;
     int resp,stsize;
-    char SendBuff[1024],RecvBuff[1024];
+    char SendBuff[1024],RecvBuff[1024];//enviar y recibir mensajes
 
     Servidor(){
-       //Inicializamos la DLL de sockets
+
+       //Inicializamos la libreria winsock2
+       cout<<"Inicializando Winsock..."<<endl;
        resp=WSAStartup(MAKEWORD(1,0),&wsaData);
        if(resp){
-        cout<<"Error al inicializar socket"<<endl;
+        cout<<"Error al inicializar socket"<<WSAGetLastError()<<endl;
         getchar();
-
        }
+       cout<<"Winsock Inicializado"<<endl;
 
        //Obtenemos la IP que usará nuestro servidor...
        // en este caso localhost indica nuestra propia máquina...
@@ -32,73 +34,74 @@ public:
         getchar();
         WSACleanup();
        }
+
        // Creamos el socket...
-       conn_socket=socket(AF_INET,SOCK_STREAM, 0);
-       if(conn_socket==INVALID_SOCKET){
-        cout<<"Error al crear socket"<<endl;
+       conexion_socket=socket(AF_INET,SOCK_STREAM, 0);
+       if(conexion_socket==INVALID_SOCKET){
+        cout<<"Error al crear socket"<<WSAGetLastError()<<endl;
         getchar();
         WSACleanup();
        }
+       cout<<"Socket creado."<<endl;
+
        //asociamos la address al socket
-       memset(&server, 0, sizeof(server)) ;
-       memcpy(&server.sin_addr, hp->h_addr, hp->h_length);
-       server.sin_family = hp->h_addrtype;
-       server.sin_port = htons(6000);
+       memset(&servidor, 0, sizeof(servidor)) ;
+       memcpy(&servidor.sin_addr, hp->h_addr, hp->h_length);
+       servidor.sin_family = hp->h_addrtype;
+       servidor.sin_port = htons(6000);
 
        // Asociamos ip y puerto al socket
-       resp=bind(conn_socket, (struct sockaddr *)&server, sizeof(server));
+       resp=bind(conexion_socket, (struct sockaddr *)&servidor, sizeof(servidor));
        if(resp==SOCKET_ERROR){
-        cout<<"Error al asociar puerto e ip al socket"<<endl;
-        closesocket(conn_socket);
+        cout<<"Error al asociar puerto e ip al socket"<<WSAGetLastError()<<endl;
+        closesocket(conexion_socket);
         WSACleanup();
         getchar();
        }
-       if(listen(conn_socket, 1)==SOCKET_ERROR){
-        cout<<"Error al habilitar conexiones entrantes"<<endl;
-        closesocket(conn_socket);
+       cout<<"Bind Success"<<endl;
+
+       //ponemos a escuchar al servidor
+       if(listen(conexion_socket, 1)==SOCKET_ERROR){
+        cout<<"Error al habilitar conexiones entrantes"<<WSAGetLastError()<<endl;
+        closesocket(conexion_socket);
         WSACleanup();
         getchar();
        }
 
        // Aceptamos conexiones entrantes
-       printf("Esperando conexiones entrantes... \n");
+       cout<<"Esperando conexiones entrantes..."<<endl;
        stsize=sizeof(struct sockaddr);
-       comm_socket=accept(conn_socket,(struct sockaddr *)&client,&stsize);
-       if(comm_socket==INVALID_SOCKET){
-          cout<<"Error al aceptar conexión entrante"<<endl;
-          closesocket(conn_socket);
+       comunicacion_socket=accept(conexion_socket,(struct sockaddr *)&cliente,&stsize);
+       if(comunicacion_socket==INVALID_SOCKET){
+          cout<<"Error al aceptar conexión entrante"<<WSAGetLastError()<<endl;
+          closesocket(conexion_socket);
           WSACleanup();
           getchar();
        }
-       printf("Conexión entrante desde: %s\n", inet_ntoa(client.sin_addr));
+       cout<<"Conexion entrante desde: "<<inet_ntoa(cliente.sin_addr)<<endl;
 
        // Como no vamos a aceptar más conexiones cerramos el socket escucha
-       closesocket(conn_socket);
+       //closesocket(conexion_socket);
     }
     void recibir(){
-        /*printf("Recibiendo Mensaje... \n");
-        recv (comm_socket, RecvBuff, sizeof(RecvBuff), 0);
-        printf("Datos recibidos: %s \n", RecvBuff);*/
-        recv (comm_socket, RecvBuff, sizeof(RecvBuff), 0);
-        cout<<"El cliente dice "<< RecvBuff <<endl;
+        recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
+        cout<<"El cliente dice: "<<RecvBuff<<endl;
         memset(RecvBuff,0,sizeof(RecvBuff));
     }
 
     void enviar(){
-        /*printf("Enviando Mensaje... \n");
-        send (comm_socket, SendBuff, sizeof(SendBuff), 0);
-        printf("Datos enviados: %s \n", SendBuff);*/
         cout<<"Escribe el mensaje a enviar: ";
         cin>>this->SendBuff;
-        send(comm_socket, SendBuff, sizeof(SendBuff), 0);
+        send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
-        cout << "Mensaje enviado!" << endl;
+        cout << "Mensaje enviado!" <<endl;
     }
 
     void cerrar(){
-        // Cerramos el socket de la comunicacion
-        closesocket(comm_socket);
+        // Cerramos el socket de la conexion
+        closesocket(conexion_socket);
         WSACleanup();
+        cout<<"Socket cerrado"<<endl;
     }
 
 
@@ -113,5 +116,6 @@ int main(int argc, char *argv[])
         server->recibir();
         server->enviar();
     }
+    server->cerrar();
     return 0;
 }
