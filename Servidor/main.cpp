@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <winsock2.h>
+#include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -86,12 +88,14 @@ public:
     void recibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
         cout<<"El cliente dice: "<<RecvBuff<<endl;
+        log(RecvBuff);
         memset(RecvBuff,0,sizeof(RecvBuff));
     }
 
     void enviar(){
         cout<<"Escribe el mensaje a enviar: ";
         cin>>this->SendBuff;
+        log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
         cout << "Mensaje enviado!" <<endl;
@@ -102,9 +106,27 @@ public:
         closesocket(conexion_socket);
         WSACleanup();
         cout<<"Socket cerrado"<<endl;
+        //log.close();
     }
 
+    void log(string msg){
+        // Declaramos las variables
+        ofstream log;
+        string log_file;
 
+        // Creamos el archivo de log
+        log_file.assign("sever.log");
+        log.open(log_file.c_str());
+
+        // Escribimos una línea con el nombre del archivo
+        log << "2020-10-15: " << msg << std::endl;
+
+        // Escribimos en el log
+        //log << "Esta es una linea del log" << std::endl;
+
+        // Cerramos el archivo
+        //log.close();
+    }
 
 
 };
@@ -112,6 +134,7 @@ public:
 int main(int argc, char *argv[])
 {
     Servidor *server = new Servidor();
+
     while(true){
         server->recibir();
         server->enviar();

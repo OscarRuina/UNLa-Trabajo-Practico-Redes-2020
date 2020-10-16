@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <windows.h>
+#include <string.h>
+
 using namespace std;
 
 class Cliente{
@@ -35,7 +37,7 @@ public:
        // Creamos el socket...
        conexion_socket=socket(AF_INET,SOCK_STREAM, 0);
        if(conexion_socket==INVALID_SOCKET) {
-          cout<<"Error al crear socket"<<WSAGetLastError()<<endl;
+          cout<<"Error al crear socket "<<WSAGetLastError()<<endl;
           getchar();
           WSACleanup();
        }
@@ -49,17 +51,19 @@ public:
 
        // Nos conectamos con el servidor...
        if(connect(conexion_socket,(struct sockaddr *)&servidor,sizeof(servidor))==SOCKET_ERROR){
-          cout<<"Fallo al conectarse con el servidor"<<WSAGetLastError()<<endl;
+          cout<<"Fallo al conectarse con el servidor "<<WSAGetLastError()<<endl;
           closesocket(conexion_socket);
           WSACleanup();
           getchar();
        }
        cout<<"Conexion establecida con: "<<inet_ntoa(servidor.sin_addr)<<endl;
+
     }
 
-    void enviar(){
-        cout <<"Escribe el mensaje a enviar: ";
-        cin>>this->SendBuff;
+    void enviar(string msg){
+        //cout <<"Escribe el mensaje a enviar: ";
+        //cin>>this->SendBuff;
+        strcpy(SendBuff, msg.c_str());
         send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
         cout << "Mensaje enviado!" << endl;
@@ -82,9 +86,28 @@ public:
 int main(int argc, char *argv[])
 {
     Cliente *cliente = new Cliente();
+    string usuario;
+    string pass;
+    string msg;
+
+    cout<<"Ingrese Usuario"<<endl;
+    cin>>usuario;
+    cout<<"Ingrese Contraseña"<<endl;
+    cin>>pass;
+
+    //
+    //opcion~Restos de mensajes.
+    msg = "1~" + usuario + "~" + pass   ;
+    //msg = usuario + ";" + pass   ;
+    cliente->enviar(msg);
+
     while(true){
-        cliente->enviar();
-        cliente->recibir();
+        //El menu con las opciones
+
+        //cliente->enviar();
+        //cliente->recibir();
     }
     return 0;
 }
+
+//funciones del main

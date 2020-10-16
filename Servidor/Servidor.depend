@@ -9,3 +9,10 @@
 	<stdio.h>
 	<winsock2.h>
 
+1602813367 source:c:\users\thesi\documents\bitbucket\redes2020\servidor\main.cpp
+	<iostream>
+	<stdio.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+
