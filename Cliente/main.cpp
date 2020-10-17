@@ -62,13 +62,7 @@ public:
 
     }
     //metodo que envia el usuario y la contraseña al servidor
-    void enviarUserPassword(/*string usuario,string pass*/string msg){
-        /*strcpy(user, usuario.c_str());
-        send(conexion_socket, user, sizeof(user), 0);
-        memset(user, 0, sizeof(user));
-        strcpy(password, pass.c_str());
-        send(conexion_socket, password, sizeof(password), 0);
-        memset(password, 0, sizeof(password));*/
+    void enviarUserPassword(string msg){
         strcpy(SendBuff, msg.c_str());
         send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
@@ -105,32 +99,17 @@ int main(int argc, char *argv[])
     string pass;
     string msg;
 
-    /*cout<<"Ingrese Usuario"<<endl;
-    cin>>usuario;
-    cout<<"Ingrese Contraseña"<<endl;
-    cin>>pass;
-
-    //
-    //opcion~Restos de mensajes.
-    msg = "1~" + usuario + "~" + pass   ;
-    //msg = usuario + ";" + pass   ;
-    cliente->enviarUserPassword(msg);*/
-
     while(true){
         cout<<"Ingrese Usuario"<<endl;
         cin>>usuario;
         cout<<"Ingrese Contraseña"<<endl;
         cin>>pass;
-       // msg = "1~" + usuario + "~" + pass;
-       msg = usuario + ";" + pass;
-        //cliente->enviarUserPassword(usuario,pass);
+        // msg = "1~" + usuario + "~" + pass;
+        msg = usuario + ";" + pass;
         cliente->enviarUserPassword(msg);
+        //cliente->enviar();
         cliente->recibir();
 
-        //El menu con las opciones
-
-        //cliente->enviar();
-        //cliente->recibir();
     }
     return 0;
 }

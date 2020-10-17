@@ -12,7 +12,7 @@ using namespace std;
 
 int countLog;
 
-void leerArchivoUsuarios(/*char user[1024],char password[1024]*/char RecvBuff[1024]);
+void leerArchivoUsuarios(char RecvBuff[1024]);
 
 class Servidor{
 public:
@@ -23,7 +23,7 @@ public:
     struct sockaddr_in cliente;//direccion del socket cliente
     struct hostent *hp;
     int resp,stsize;
-    char SendBuff[1024],RecvBuff[1024],user[1024],password[1024];//enviar y recibir mensajes
+    char SendBuff[1024],RecvBuff[1024];//enviar y recibir mensajes
 
 
     Servidor(){
@@ -109,22 +109,16 @@ public:
     }
     //metodo que recibe el usuario y la contraseña
     void recibirUserPassword(){
-        /*recv (comunicacion_socket, user, sizeof(user), 0);
-        cout<<"Usuario: "<<user<<endl;
-        recv (comunicacion_socket, password, sizeof(password), 0);
-        cout<<"Contraseña: "<<password<<endl;
-        //leo archivo y verifico que sea igual a una contraseña
-        leerArchivoUsuarios(user,password);
-        memset(user,0,sizeof(user));
-        memset(password,0,sizeof(password));*/
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
-        cout<<"El cliente dice: "<<RecvBuff<<endl;
+        cout<<"Usuario y Contraseña: "<<RecvBuff<<endl;
         //log(RecvBuff);
         //leo archivo y verifico que sea igual a una contraseña
+        //memset(RecvBuff,0,sizeof(RecvBuff));
         leerArchivoUsuarios(RecvBuff);
         memset(RecvBuff,0,sizeof(RecvBuff));
+
     }
-    //metodod comun para enviar mensajes
+    //metodo comun para enviar mensajes
     void enviar(){
         cout<<"Escribe el mensaje a enviar: ";
         cin>>this->SendBuff;
@@ -134,9 +128,16 @@ public:
         cout << "Mensaje enviado!" <<endl;
     }
 
-    void cerrar(){
+    void cerrarConexion(){
         // Cerramos el socket de la conexion
         closesocket(conexion_socket);
+        WSACleanup();
+        cout<<"Socket cerrado"<<endl;
+    }
+
+    void cerrarComunicacion(){
+        // Cerramos el socket de la comunicacion
+        closesocket(comunicacion_socket);
         WSACleanup();
         cout<<"Socket cerrado"<<endl;
     }
@@ -147,7 +148,7 @@ public:
         string log_file;
 
         //Abrir el archivo
-        log_file.assign("sever.log");
+        log_file.assign("server.log");
         log.open(log_file.c_str(),ios::app);
 
         //Declaramos la fecha/hora del dia.
@@ -171,11 +172,11 @@ public:
         }
 
         // Creamos el archivo de log
-        log_file.assign("server.log");
-        log.open(log_file.c_str());
+        //log_file.assign("server.log");
+        //log.open(log_file.c_str());
 
         // Escribimos una línea con el nombre del archivo
-        log << "2020-10-15: " << msg << std::endl;
+        //log << "2020-10-15: " << msg << std::endl;
 
         // Escribimos en el log
         //log << "Esta es una linea del log" << std::endl;
@@ -196,16 +197,15 @@ int main(int argc, char *argv[])
         server->recibirUserPassword();
         server->enviar();
     }
-    server->cerrar();
+    server->cerrarConexion();
     return 0;
 }
 //funcion para leer el archivo
-void leerArchivoUsuarios(/*char user[1024],char password[1024]*/char RecvBuff[1024]){
+void leerArchivoUsuarios(char RecvBuff[1024]){
    ifstream usuarios;
    string linea,linea2;
    std::string usuario(RecvBuff); //convierto el char a string
-   //std::string contraseña(password);
-   int encontrado = 0;
+   int encontrado  = 0;
    usuarios.open("usuarios.txt",ios::in); // abro el archivo en modo lectura
    if(usuarios.fail()){
     cout<<"No se pudo abrir el archivo"<<endl;
