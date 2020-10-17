@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>
+#include <winsock2.h>
 #include <windows.h>
 #include <string.h>
 
@@ -12,7 +13,7 @@ public:
     struct sockaddr_in servidor;
     struct hostent *hp;
     int resp;
-    char SendBuff[1024],RecvBuff[1024];
+    char SendBuff[1024],RecvBuff[1024],user[1024],password[1024];
 
     Cliente(){
 
@@ -55,19 +56,33 @@ public:
           closesocket(conexion_socket);
           WSACleanup();
           getchar();
+
        }
        cout<<"Conexion establecida con: "<<inet_ntoa(servidor.sin_addr)<<endl;
 
     }
-
-    void enviar(string msg){
-        //cout <<"Escribe el mensaje a enviar: ";
-        //cin>>this->SendBuff;
+    //metodo que envia el usuario y la contraseña al servidor
+    void enviarUserPassword(/*string usuario,string pass*/string msg){
+        /*strcpy(user, usuario.c_str());
+        send(conexion_socket, user, sizeof(user), 0);
+        memset(user, 0, sizeof(user));
+        strcpy(password, pass.c_str());
+        send(conexion_socket, password, sizeof(password), 0);
+        memset(password, 0, sizeof(password));*/
         strcpy(SendBuff, msg.c_str());
+        send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
+        memset(SendBuff, 0, sizeof(SendBuff));
+        cout << "Usuario y Contraseña enviados!" << endl;
+    }
+    //metodo comun para enviar mensajes
+    void enviar(){
+        cout <<"Escribe el mensaje a enviar: ";
+        cin>>this->SendBuff;
         send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
         cout << "Mensaje enviado!" << endl;
     }
+    //metodo comun para recibir mensajes
     void recibir(){
         recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
         cout << "El servidor dice: " << RecvBuff << endl;
@@ -90,7 +105,7 @@ int main(int argc, char *argv[])
     string pass;
     string msg;
 
-    cout<<"Ingrese Usuario"<<endl;
+    /*cout<<"Ingrese Usuario"<<endl;
     cin>>usuario;
     cout<<"Ingrese Contraseña"<<endl;
     cin>>pass;
@@ -99,9 +114,19 @@ int main(int argc, char *argv[])
     //opcion~Restos de mensajes.
     msg = "1~" + usuario + "~" + pass   ;
     //msg = usuario + ";" + pass   ;
-    cliente->enviar(msg);
+    cliente->enviarUserPassword(msg);*/
 
     while(true){
+        cout<<"Ingrese Usuario"<<endl;
+        cin>>usuario;
+        cout<<"Ingrese Contraseña"<<endl;
+        cin>>pass;
+       // msg = "1~" + usuario + "~" + pass;
+       msg = usuario + ";" + pass;
+        //cliente->enviarUserPassword(usuario,pass);
+        cliente->enviarUserPassword(msg);
+        cliente->recibir();
+
         //El menu con las opciones
 
         //cliente->enviar();
