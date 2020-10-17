@@ -4,13 +4,15 @@
 	<stdio.h>
 	<winsock2.h>
 
-1602959316 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidor\main.cpp
+1602967698 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidor\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
 	<winsock2.h>
 	<string>
 	<fstream>
+	<ctime>
+	<sstream>
 
 1602963804 source:c:\users\thesi\documents\bitbucket\redes2020\servidor\main.cpp
 	<iostream>

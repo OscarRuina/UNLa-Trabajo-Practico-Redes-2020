@@ -9,11 +9,10 @@
 
 using namespace std;
 
-<<<<<<< HEAD
+
 int countLog;
-=======
+
 void leerArchivoUsuarios(/*char user[1024],char password[1024]*/char RecvBuff[1024]);
->>>>>>> 3035d69cd0b4cbd8ebd1886debcefa4a702baa76
 
 class Servidor{
 public:
@@ -95,14 +94,13 @@ public:
 
        // Como no vamos a aceptar más conexiones cerramos el socket escucha
        //closesocket(conexion_socket);
-<<<<<<< HEAD
+
 
     }   //FIN SERVIDOR
 
-=======
-    }
+
+
     //metodo comun para recibir mensajes
->>>>>>> 3035d69cd0b4cbd8ebd1886debcefa4a702baa76
     void recibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
         cout<<"El cliente dice: "<<RecvBuff<<endl;
@@ -147,7 +145,7 @@ public:
         // Declaramos las variables
         ofstream log;
         string log_file;
-<<<<<<< HEAD
+
         //Abrir el archivo
         log_file.assign("sever.log");
         log.open(log_file.c_str(),ios::app);
@@ -171,7 +169,6 @@ public:
             // Escribimos en el log
             log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": " << msg << std::endl;
         }
-=======
 
         // Creamos el archivo de log
         log_file.assign("server.log");
@@ -182,7 +179,7 @@ public:
 
         // Escribimos en el log
         //log << "Esta es una linea del log" << std::endl;
->>>>>>> 3035d69cd0b4cbd8ebd1886debcefa4a702baa76
+
 
         // Cerramos el archivo
         log.close();
