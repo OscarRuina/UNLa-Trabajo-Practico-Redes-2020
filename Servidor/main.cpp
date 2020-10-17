@@ -3,8 +3,12 @@
 #include <winsock2.h>
 #include <string>
 #include <fstream>
+#include <ctime>
+#include <sstream>
 
 using namespace std;
+
+int countLog;
 
 class Servidor{
 public:
@@ -17,8 +21,10 @@ public:
     int resp,stsize;
     char SendBuff[1024],RecvBuff[1024];//enviar y recibir mensajes
 
-    Servidor(){
 
+    Servidor(){
+        countLog = 1;
+        log("INICIA SERVIDOR");
        //Inicializamos la libreria winsock2
        cout<<"Inicializando Winsock..."<<endl;
        resp=WSAStartup(MAKEWORD(1,0),&wsaData);
@@ -84,7 +90,9 @@ public:
 
        // Como no vamos a aceptar más conexiones cerramos el socket escucha
        //closesocket(conexion_socket);
-    }
+
+    }   //FIN SERVIDOR
+
     void recibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
         cout<<"El cliente dice: "<<RecvBuff<<endl;
@@ -106,26 +114,38 @@ public:
         closesocket(conexion_socket);
         WSACleanup();
         cout<<"Socket cerrado"<<endl;
-        //log.close();
     }
 
     void log(string msg){
         // Declaramos las variables
         ofstream log;
         string log_file;
-
-        // Creamos el archivo de log
+        //Abrir el archivo
         log_file.assign("sever.log");
-        log.open(log_file.c_str());
+        log.open(log_file.c_str(),ios::app);
 
-        // Escribimos una línea con el nombre del archivo
-        log << "2020-10-15: " << msg << std::endl;
+        //Declaramos la fecha/hora del dia.
+        time_t now = time(0);
+        tm* time = localtime(&now);
+        int dia = time-> tm_mday;
+        int mes = time-> tm_mon + 1;
+        int anio = 1900 + time-> tm_year;
+        int hora = time-> tm_hour;
+        int minu = time-> tm_min;
 
-        // Escribimos en el log
-        //log << "Esta es una linea del log" << std::endl;
+        // Escribimos inicio del log
+        if (countLog == 1) {
+            log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": ==================" << std::endl;
+            log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": " << msg << std::endl;
+            log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": ==================" << std::endl;
+            countLog += 1;
+        }else{
+            // Escribimos en el log
+            log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": " << msg << std::endl;
+        }
 
         // Cerramos el archivo
-        //log.close();
+        log.close();
     }
 
 
