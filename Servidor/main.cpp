@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 #include <winsock2.h>
 #include <string>
 #include <fstream>
@@ -8,7 +9,11 @@
 
 using namespace std;
 
+<<<<<<< HEAD
 int countLog;
+=======
+void leerArchivoUsuarios(/*char user[1024],char password[1024]*/char RecvBuff[1024]);
+>>>>>>> 3035d69cd0b4cbd8ebd1886debcefa4a702baa76
 
 class Servidor{
 public:
@@ -19,7 +24,7 @@ public:
     struct sockaddr_in cliente;//direccion del socket cliente
     struct hostent *hp;
     int resp,stsize;
-    char SendBuff[1024],RecvBuff[1024];//enviar y recibir mensajes
+    char SendBuff[1024],RecvBuff[1024],user[1024],password[1024];//enviar y recibir mensajes
 
 
     Servidor(){
@@ -81,7 +86,7 @@ public:
        stsize=sizeof(struct sockaddr);
        comunicacion_socket=accept(conexion_socket,(struct sockaddr *)&cliente,&stsize);
        if(comunicacion_socket==INVALID_SOCKET){
-          cout<<"Error al aceptar conexión entrante"<<WSAGetLastError()<<endl;
+          cout<<"Error al aceptar conexión entrante "<<WSAGetLastError()<<endl;
           closesocket(conexion_socket);
           WSACleanup();
           getchar();
@@ -90,16 +95,38 @@ public:
 
        // Como no vamos a aceptar más conexiones cerramos el socket escucha
        //closesocket(conexion_socket);
+<<<<<<< HEAD
 
     }   //FIN SERVIDOR
 
+=======
+    }
+    //metodo comun para recibir mensajes
+>>>>>>> 3035d69cd0b4cbd8ebd1886debcefa4a702baa76
     void recibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
         cout<<"El cliente dice: "<<RecvBuff<<endl;
         log(RecvBuff);
         memset(RecvBuff,0,sizeof(RecvBuff));
     }
-
+    //metodo que recibe el usuario y la contraseña
+    void recibirUserPassword(){
+        /*recv (comunicacion_socket, user, sizeof(user), 0);
+        cout<<"Usuario: "<<user<<endl;
+        recv (comunicacion_socket, password, sizeof(password), 0);
+        cout<<"Contraseña: "<<password<<endl;
+        //leo archivo y verifico que sea igual a una contraseña
+        leerArchivoUsuarios(user,password);
+        memset(user,0,sizeof(user));
+        memset(password,0,sizeof(password));*/
+        recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
+        cout<<"El cliente dice: "<<RecvBuff<<endl;
+        //log(RecvBuff);
+        //leo archivo y verifico que sea igual a una contraseña
+        leerArchivoUsuarios(RecvBuff);
+        memset(RecvBuff,0,sizeof(RecvBuff));
+    }
+    //metodod comun para enviar mensajes
     void enviar(){
         cout<<"Escribe el mensaje a enviar: ";
         cin>>this->SendBuff;
@@ -120,6 +147,7 @@ public:
         // Declaramos las variables
         ofstream log;
         string log_file;
+<<<<<<< HEAD
         //Abrir el archivo
         log_file.assign("sever.log");
         log.open(log_file.c_str(),ios::app);
@@ -143,6 +171,18 @@ public:
             // Escribimos en el log
             log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": " << msg << std::endl;
         }
+=======
+
+        // Creamos el archivo de log
+        log_file.assign("server.log");
+        log.open(log_file.c_str());
+
+        // Escribimos una línea con el nombre del archivo
+        log << "2020-10-15: " << msg << std::endl;
+
+        // Escribimos en el log
+        //log << "Esta es una linea del log" << std::endl;
+>>>>>>> 3035d69cd0b4cbd8ebd1886debcefa4a702baa76
 
         // Cerramos el archivo
         log.close();
@@ -156,9 +196,32 @@ int main(int argc, char *argv[])
     Servidor *server = new Servidor();
 
     while(true){
-        server->recibir();
+        server->recibirUserPassword();
         server->enviar();
     }
     server->cerrar();
     return 0;
+}
+//funcion para leer el archivo
+void leerArchivoUsuarios(/*char user[1024],char password[1024]*/char RecvBuff[1024]){
+   ifstream usuarios;
+   string linea,linea2;
+   std::string usuario(RecvBuff); //convierto el char a string
+   //std::string contraseña(password);
+   int encontrado = 0;
+   usuarios.open("usuarios.txt",ios::in); // abro el archivo en modo lectura
+   if(usuarios.fail()){
+    cout<<"No se pudo abrir el archivo"<<endl;
+   }
+   while(getline(usuarios,linea)){
+        if(linea.find(usuario) != string::npos){
+            cout<<linea<<endl;
+            encontrado = 1;
+        }
+   }
+   if(encontrado == 0){
+    cout<<"No se encontro el usuario "<<usuario<<endl;
+   }
+   usuarios.close();
+
 }
