@@ -86,10 +86,18 @@ public:
      void recibirResp(){
         recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
         if ( RecvBuff[0] == '4' ) {
-            cerrar();                 //explota aca
+            cerrarPorIntentos();                 //explota aca
         }
 
         memset(RecvBuff, 0, sizeof(RecvBuff));
+    }
+
+    void cerrarPorIntentos(){
+        // Cerramos el socket y liberamos la DLL de sockets
+        closesocket(conexion_socket);
+        WSACleanup();
+        cout<<"Se supero la cantidad maxima de intentos de ingreso"<<endl;
+        system("PAUSE");
     }
 
     void cerrar(){
