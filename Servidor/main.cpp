@@ -116,7 +116,8 @@ public:
         if ( RecvBuff[0] != '\0' ){
             //cout<<"Usuario y Contraseña: "<<RecvBuff<<endl;
             if (leerArchivoUsuarios(RecvBuff) == 0 ){ //1-valida usuario y pass
-                Intentos = Intentos + 1;      //2-intentos
+                Intentos = Intentos + 1; //2-intentos
+                enviarNoEncontrado(); //si no lo encuentra envio esto para que vuelva a escribir
             }
             if ( Intentos == 3 ){
                 log("Usuario ingreso tres veces mal la contrasena");
@@ -125,6 +126,13 @@ public:
         }
         memset(RecvBuff,0,sizeof(RecvBuff));
     }
+    //funcion para enviar si no se encontro el usuario,
+    void enviarNoEncontrado(){
+        SendBuff[0] = '1';
+        send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
+        memset(SendBuff, 0, sizeof(SendBuff));
+    }
+
 
     void enviarCierre(){
         SendBuff[0] = '4';
@@ -145,6 +153,8 @@ public:
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
     }
+    //metodo que recibe la opcion del menu cliente
+    void recibirOpcion(){}
 
     void cerrarConexion(){
         // Cerramos el socket de la conexion
@@ -170,6 +180,7 @@ int main(int argc, char *argv[])
     while(true){
         server->recibirUserPassword();
         server->enviarIntento();
+
     }
 
     server->cerrarConexion();
@@ -224,7 +235,7 @@ void log(string msg){
 //funcion para leer el archivo
 int leerArchivoUsuarios(char RecvBuff[1024]){
    ifstream usuarios;
-   string linea,linea2;
+   string linea;
    std::string usuario(RecvBuff); //convierto el char a string
    int encontrado  = 0;
    usuarios.open("usuarios.txt",ios::in); // abro el archivo en modo lectura

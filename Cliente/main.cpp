@@ -5,7 +5,7 @@
 #include <string.h>
 
 using namespace std;
-
+void menu();
 class Cliente{
 public:
     WSADATA wsaData;
@@ -83,14 +83,31 @@ public:
         memset(RecvBuff, 0, sizeof(RecvBuff));
     } ///ejemplo
 
-     void recibirResp(){
+     int recibirResp(){
+        int OK = 0;
         recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
         if ( RecvBuff[0] == '4' ) {
-            cerrarPorIntentos();                 //explota aca
-        }
+            cerrarPorIntentos();//explota aca
 
+        }
+        if ( RecvBuff[0] == '1'){
+            OK = 1;
+
+        }
         memset(RecvBuff, 0, sizeof(RecvBuff));
+        return OK;
     }
+    //case 1
+    void envioAltaServicio(){}
+
+    //case 2
+    void envioGestionPasajes(){}
+
+    //case 3
+    void envioVerRegistroDeActividades(){}
+
+    //case 4
+    void envioCerrarSesion(){}
 
     void cerrarPorIntentos(){
         // Cerramos el socket y liberamos la DLL de sockets
@@ -117,7 +134,7 @@ int main(int argc, char *argv[])
     string usuario;
     string pass;
     string msg;
-
+    int opcion = -1;
     while(true){
         cout<<"Ingrese Usuario"<<endl;
         cin>>usuario;
@@ -127,11 +144,37 @@ int main(int argc, char *argv[])
         msg = usuario + ";" + pass;
         cliente->enviarUserPassword(msg);
         //cliente->enviar();
-        cliente->recibirResp();
+        if(cliente->recibirResp() == 0){
         //aca va el menu despues si responde "OK" el server.
+        //si es incorrecto el usuario llega al menu igual
+        system("cls");
+        while(opcion == -1){
+            menu();
+            cin>>opcion;
+            switch(opcion){
+            case 1: cliente->envioAltaServicio();
+                break;
+            case 2: cliente->envioGestionPasajes();
+                break;
+            case 3: cliente->envioVerRegistroDeActividades();
+                break;
+            case 4: cliente->envioCerrarSesion();
+                break;
+            default: return -1;
+
+            }
+        }
+        }
     }
 
     return 0;
 }
 
 //funciones del main
+void menu(){
+    cout<<"BIENVENIDO AL SISTEMA"<<endl;
+    cout<<"1- Alta Servicio."<<endl;
+    cout<<"2- Gestionar Pasajes."<<endl;
+    cout<<"3- Ver Registro de Actividades."<<endl;
+    cout<<"4- Cerrar Sesion."<<endl;
+}

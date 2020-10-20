@@ -1,10 +1,15 @@
 # depslib dependency file v1.0
-1601504591 source:c:\users\usuario\documents\unla sistemas\2-materias sistemas segundo año\algoritmos y estructuras de datos\servidor\main.cpp
+1603227006 source:c:\users\usuario\documents\unla sistemas\2-materias sistemas segundo año\algoritmos y estructuras de datos\servidor\main.cpp
 	<iostream>
 	<stdio.h>
+	<stdlib.h>
 	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
 
-1602972092 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidor\main.cpp
+1603160449 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidor\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
