@@ -11,8 +11,10 @@ using namespace std;
 
 
 int countLog;
+int Intentos;
 
-void leerArchivoUsuarios(char RecvBuff[1024]);
+int leerArchivoUsuarios(char RecvBuff[1024]);
+void log(string msg);
 
 class Servidor{
 public:
@@ -24,10 +26,11 @@ public:
     struct hostent *hp;
     int resp,stsize;
     char SendBuff[1024],RecvBuff[1024];//enviar y recibir mensajes
-
+    int RespLogin;
 
     Servidor(){
         countLog = 1;
+        RespLogin = 0;
         log("INICIA SERVIDOR");
        //Inicializamos la libreria winsock2
        cout<<"Inicializando Winsock..."<<endl;
@@ -110,13 +113,23 @@ public:
     //metodo que recibe el usuario y la contraseña
     void recibirUserPassword(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
-        cout<<"Usuario y Contraseña: "<<RecvBuff<<endl;
-        //log(RecvBuff);
-        //leo archivo y verifico que sea igual a una contraseña
-        //memset(RecvBuff,0,sizeof(RecvBuff));
-        leerArchivoUsuarios(RecvBuff);
+        if ( RecvBuff[0] != '\0' ){
+            //cout<<"Usuario y Contraseña: "<<RecvBuff<<endl;
+            if (leerArchivoUsuarios(RecvBuff) == 0 ){ //1-valida usuario y pass
+                Intentos = Intentos + 1;      //2-intentos
+            }
+            if ( Intentos == 3 ){
+                log("Usuario ingreso tres veces mal la contrasena");
+                enviarCierre();                                   //explota
+            }
+        }
         memset(RecvBuff,0,sizeof(RecvBuff));
+    }
 
+    void enviarCierre(){
+        SendBuff[0] = '4';
+        send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
+        memset(SendBuff, 0, sizeof(SendBuff));
     }
     //metodo comun para enviar mensajes
     void enviar(){
@@ -126,6 +139,11 @@ public:
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
         cout << "Mensaje enviado!" <<endl;
+    }
+
+    void enviarIntento(){
+        send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
+        memset(SendBuff, 0, sizeof(SendBuff));
     }
 
     void cerrarConexion(){
@@ -142,7 +160,24 @@ public:
         cout<<"Socket cerrado"<<endl;
     }
 
-    void log(string msg){
+};
+
+int main(int argc, char *argv[])
+{
+    Servidor *server = new Servidor();
+    Intentos = 0;
+
+    while(true){
+        server->recibirUserPassword();
+        server->enviarIntento();
+    }
+
+    server->cerrarConexion();
+    return 0;
+}
+
+//Funcion Log
+void log(string msg){
         // Declaramos las variables
         ofstream log;
         string log_file;
@@ -186,22 +221,8 @@ public:
         log.close();
     }
 
-
-};
-
-int main(int argc, char *argv[])
-{
-    Servidor *server = new Servidor();
-
-    while(true){
-        server->recibirUserPassword();
-        server->enviar();
-    }
-    server->cerrarConexion();
-    return 0;
-}
 //funcion para leer el archivo
-void leerArchivoUsuarios(char RecvBuff[1024]){
+int leerArchivoUsuarios(char RecvBuff[1024]){
    ifstream usuarios;
    string linea,linea2;
    std::string usuario(RecvBuff); //convierto el char a string
@@ -209,16 +230,19 @@ void leerArchivoUsuarios(char RecvBuff[1024]){
    usuarios.open("usuarios.txt",ios::in); // abro el archivo en modo lectura
    if(usuarios.fail()){
     cout<<"No se pudo abrir el archivo"<<endl;
+    log("No se pudo abrir el archivo");
    }
    while(getline(usuarios,linea)){
         if(linea.find(usuario) != string::npos){
-            cout<<linea<<endl;
+            cout<<linea<<endl;                         //aca tendria el usuario y pass encontrado.
+            log("El Usuario: " + linea + " se logeo");
             encontrado = 1;
         }
    }
    if(encontrado == 0){
-    cout<<"No se encontro el usuario "<<usuario<<endl;
+    cout<<"Usuario o contrasena no encontrado: "<<usuario<<endl;
+    log("Usuario o contrasena no encontrado");
    }
    usuarios.close();
-
+   return encontrado;
 }

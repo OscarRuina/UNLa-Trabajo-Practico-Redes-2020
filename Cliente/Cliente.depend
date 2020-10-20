@@ -6,9 +6,10 @@
 	<windows.h>
 	<string.h>
 
-1602815056 source:c:\users\thesi\documents\bitbucket\redes2020\cliente\main.cpp
+1603160160 source:c:\users\thesi\documents\bitbucket\redes2020\cliente\main.cpp
 	<iostream>
 	<stdio.h>
+	<winsock2.h>
 	<windows.h>
 	<string.h>
 

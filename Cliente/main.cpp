@@ -81,12 +81,23 @@ public:
         recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
         cout << "El servidor dice: " << RecvBuff << endl;
         memset(RecvBuff, 0, sizeof(RecvBuff));
+    } ///ejemplo
+
+     void recibirResp(){
+        recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
+        if ( RecvBuff[0] == '4' ) {
+            cerrar();                 //explota aca
+        }
+
+        memset(RecvBuff, 0, sizeof(RecvBuff));
     }
+
     void cerrar(){
         // Cerramos el socket y liberamos la DLL de sockets
         closesocket(conexion_socket);
         WSACleanup();
         cout<<"Socket cerrado"<<endl;
+        system("PAUSE");
     }
 
 };
@@ -108,9 +119,10 @@ int main(int argc, char *argv[])
         msg = usuario + ";" + pass;
         cliente->enviarUserPassword(msg);
         //cliente->enviar();
-        cliente->recibir();
-
+        cliente->recibirResp();
+        //aca va el menu despues si responde "OK" el server.
     }
+
     return 0;
 }
 
