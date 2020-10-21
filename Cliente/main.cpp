@@ -1,11 +1,22 @@
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 #include <winsock2.h>
-#include <windows.h>
-#include <string.h>
+#include <string>
+#include <fstream>
+#include <ctime>
+#include <sstream>
 
 using namespace std;
+
+int countLog;
+int RespLogin;
+string UsuarioLogin;
+
 void menu();
+void log(string msg);
+
+
 class Cliente{
 public:
     WSADATA wsaData;
@@ -16,7 +27,8 @@ public:
     char SendBuff[1024],RecvBuff[1024],user[1024],password[1024];
 
     Cliente(){
-
+        countLog = 1;
+        RespLogin = 0;
        //Inicializamos la libreria winsock2
        cout<<"Inicializando Winsock..."<<endl;
        resp=WSAStartup(MAKEWORD(1,0),&wsaData);
@@ -145,25 +157,27 @@ int main(int argc, char *argv[])
         cliente->enviarUserPassword(msg);
         //cliente->enviar();
         if(cliente->recibirResp() == 0){
-        //aca va el menu despues si responde "OK" el server.
-        //si es incorrecto el usuario llega al menu igual
-        system("cls");
-        while(opcion == -1){
-            menu();
-            cin>>opcion;
-            switch(opcion){
-            case 1: cliente->envioAltaServicio();
-                break;
-            case 2: cliente->envioGestionPasajes();
-                break;
-            case 3: cliente->envioVerRegistroDeActividades();
-                break;
-            case 4: cliente->envioCerrarSesion();
-                break;
-            default: return -1;
+            UsuarioLogin = usuario;
+            //aca va el menu despues si responde "OK" el server.
+            //si es incorrecto el usuario llega al menu igual
+            system("cls");
+            log("INICIA SECCION");
+            while(opcion == -1){
+                menu();
+                cin>>opcion;
+                switch(opcion){
+                case 1: cliente->envioAltaServicio();
+                    break;
+                case 2: cliente->envioGestionPasajes();
+                    break;
+                case 3: cliente->envioVerRegistroDeActividades();
+                    break;
+                case 4: cliente->envioCerrarSesion();
+                    break;
+                default: return -1;
 
+                }
             }
-        }
         }
     }
 
@@ -178,3 +192,37 @@ void menu(){
     cout<<"3- Ver Registro de Actividades."<<endl;
     cout<<"4- Cerrar Sesion."<<endl;
 }
+
+void log(string msg){
+        // Declaramos las variables
+        std::ofstream log;
+        string log_file;
+        string FileName;
+        FileName = UsuarioLogin + ".log";
+        //Abrir el archivo
+        log_file.assign(FileName);
+        log.open(log_file.c_str(),ios::app);
+
+        //Declaramos la fecha/hora del dia.
+        time_t now = time(0);
+        tm* time = localtime(&now);
+        int dia = time-> tm_mday;
+        int mes = time-> tm_mon + 1;
+        int anio = 1900 + time-> tm_year;
+        int hora = time-> tm_hour;
+        int minu = time-> tm_min;
+
+        // Escribimos inicio del log
+        if (countLog == 1) {
+            log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": ==================" << std::endl;
+            log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": " << msg << std::endl;
+            log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": ==================" << std::endl;
+            countLog += 1;
+        }else{
+            // Escribimos en el log
+            log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": " << msg << std::endl;
+        }
+
+        // Cerramos el archivo
+        log.close();
+    }
