@@ -98,19 +98,16 @@ public:
      int recibirResp(){
         int OK = 0;
         recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
-        if ( RecvBuff[0] == '4' ) {
-            cerrarPorIntentos();//explota aca
-
-        }
-        if ( RecvBuff[0] == '1'){
-            OK = 1;
-
-        }
+        if ( RecvBuff[0] == '4' ) {cerrarPorIntentos();}        //Si se superaron los 3 intentos cierra.
+        if ( RecvBuff[0] == '1'){OK = 1;}                       //Si no se encontro el usuario pone un 1
         memset(RecvBuff, 0, sizeof(RecvBuff));
         return OK;
     }
     //case 1
-    void envioAltaServicio(){}
+    void envioAltaServicio(string Origen, int fecha, string Turno){
+        //aca hace algo
+        cout<<"Entro a Envio Alta Servicio"<<endl;
+    }
 
     //case 2
     void envioGestionPasajes(){}
@@ -119,14 +116,24 @@ public:
     void envioVerRegistroDeActividades(){}
 
     //case 4
-    void envioCerrarSesion(){}
+    void envioCerrarSesion(){
+        //Cerrar servidor
+        closesocket(conexion_socket);
+        SendBuff[0] = '9'       ;                //Cierra servidor
+        send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
+        cout<<"Pulse cualquier tecla para salir"<<endl;
+        system("PAUSE");
+        exit(0);
+    }
 
     void cerrarPorIntentos(){
         // Cerramos el socket y liberamos la DLL de sockets
         closesocket(conexion_socket);
         WSACleanup();
         cout<<"Se supero la cantidad maxima de intentos de ingreso"<<endl;
+        cout<<"Pulse cualquier tecla para salir"<<endl;
         system("PAUSE");
+        exit(0);
     }
 
     void cerrar(){
@@ -162,20 +169,38 @@ int main(int argc, char *argv[])
             //si es incorrecto el usuario llega al menu igual
             system("cls");
             log("INICIA SECCION");
-            while(opcion == -1){
+
+            while(true){
                 menu();
                 cin>>opcion;
-                switch(opcion){
-                case 1: cliente->envioAltaServicio();
-                    break;
-                case 2: cliente->envioGestionPasajes();
-                    break;
-                case 3: cliente->envioVerRegistroDeActividades();
-                    break;
-                case 4: cliente->envioCerrarSesion();
-                    break;
-                default: return -1;
+                switch(opcion)
+                {
+                    case 1:{ //debe ingresar el Origen, la fecha y el turno
+                            string Origen;
+                            Origen = "";
+                            while (Origen != "BA" && Origen != "MP"){
+                                cout<<"Ingrese Origen: BA (Buenos Aires) o MP (Mar del Plata)"<<endl;
+                                cin>>Origen;
+                            }
+                            int fecha;
+                            cout<<"Ingrese fecha con formato DDMMAAAA"<<endl;           //QUEDA VALIDAR
+                            cin>>fecha;
 
+                            string Turno;
+                            while (Turno != "M" && Turno != "T" && Turno != "N"){
+                                cout<<"Ingrese Turno: M (Mañana) T (Tarde) N (Noche)"<<endl;           //QUEDA VALIDAR
+                                cin>>Turno;
+                            }
+                            cliente->envioAltaServicio(Origen,fecha,Turno);
+                            break;
+                        }
+                    case 2: cliente->envioGestionPasajes();
+                        break;
+                    case 3: cliente->envioVerRegistroDeActividades();
+                        break;
+                    case 4: cliente->envioCerrarSesion();
+                        break;
+                    //default: return -1;
                 }
             }
         }
@@ -193,6 +218,8 @@ void menu(){
     cout<<"4- Cerrar Sesion."<<endl;
 }
 
+
+//LOG va al servidor
 void log(string msg){
         // Declaramos las variables
         std::ofstream log;

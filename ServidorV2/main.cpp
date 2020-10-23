@@ -13,7 +13,7 @@ using namespace std;
 int countLog;
 int Intentos;
 
-int leerArchivoUsuarios(char RecvBuff[1024]);
+int leerArchivoUsuarios(string RecvBuff);
 void log(string msg);
 
 class Servidor{
@@ -101,8 +101,6 @@ public:
 
     }   //FIN SERVIDOR
 
-
-
     //metodo comun para recibir mensajes
     void recibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
@@ -110,35 +108,15 @@ public:
         log(RecvBuff);
         memset(RecvBuff,0,sizeof(RecvBuff));
     }
-    //metodo que recibe el usuario y la contraseña
-    void recibirUserPassword(){
+
+    std::string NewRecibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
-        if ( RecvBuff[0] != '\0' ){
-            //cout<<"Usuario y Contraseña: "<<RecvBuff<<endl;
-            if (leerArchivoUsuarios(RecvBuff) == 0 ){ //1-valida usuario y pass
-                Intentos = Intentos + 1; //2-intentos
-                enviarNoEncontrado(); //si no lo encuentra envio esto para que vuelva a escribir
-            }
-            if ( Intentos == 3 ){
-                log("Usuario ingreso tres veces mal la contrasena");
-                enviarCierre();                                   //explota
-            }
-        }
-        memset(RecvBuff,0,sizeof(RecvBuff));
-    }
-    //funcion para enviar si no se encontro el usuario,
-    void enviarNoEncontrado(){
-        SendBuff[0] = '1';
-        send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
-        memset(SendBuff, 0, sizeof(SendBuff));
+        cout<<"El cliente dice: "<<RecvBuff<<endl;
+        log(RecvBuff);
+        //------------------------------------
+        return std::string(RecvBuff);
     }
 
-
-    void enviarCierre(){
-        SendBuff[0] = '4';
-        send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
-        memset(SendBuff, 0, sizeof(SendBuff));
-    }
     //metodo comun para enviar mensajes
     void enviar(){
         cout<<"Escribe el mensaje a enviar: ";
@@ -149,13 +127,12 @@ public:
         cout << "Mensaje enviado!" <<endl;
     }
 
-    void enviarIntento(){
+    void enviar(string msg){
+        strcpy(SendBuff, msg.c_str());
+        log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
-    }
-    //metodo que recibe la opcion del menu cliente
-    void recibirOpcion(){
-
+        cout << "Mensaje enviado!" <<endl;
     }
 
     void cerrarConexion(){
@@ -183,12 +160,37 @@ int main(int argc, char *argv[])
 {
     Servidor *server = new Servidor();
     Intentos = 0;
+    server->recibir();
+    int encontrado = 0;
 
-    while(true){
-        server->recibirUserPassword();
-        server->enviarIntento();
+    while (encontrado == 0){
+        server->enviar("Ingrese Usuario");
+        string usuario = server->NewRecibir();
+        server->enviar("Ingrese Contrasenia");
+        string Pass = server->NewRecibir();
 
+        string UsuPass = usuario + ';' + Pass;
+
+        if ( leerArchivoUsuarios(UsuPass) == 0 ){  //No lo encontro, intento++
+            Intentos = Intentos + 1;               //encontrado seguira en 0 para repetirse
+        }else{
+            encontrado = 1; //Sa
+        }
+
+        if (Intentos == 3 ){
+            //hizo 3 intentos
+            server->enviar("Se supero la cantidad maxima de intentos de ingreso, intente en otro momento");
+            break; //Aca hay que hacer un procedimietno que reinicie
+                   //el servidor y mande a volar el cliente
+                   //cierra socket y abre socket de vuelta
+        }
     }
+
+
+    //while(true){
+    //    server->recibir();
+    //    server->enviar();
+    //}
 
     server->cerrarConexion();
     return 0;
@@ -240,10 +242,12 @@ void log(string msg){
     }
 
 //funcion para leer el archivo
-int leerArchivoUsuarios(char RecvBuff[1024]){
+int leerArchivoUsuarios(string RecvBuff){
    ifstream usuarios;
    string linea;
-   std::string usuario(RecvBuff); //convierto el char a string
+   string usuario;
+
+   usuario = RecvBuff;
    int encontrado  = 0;
    usuarios.open("usuarios.txt",ios::in); // abro el archivo en modo lectura
    if(usuarios.fail()){
