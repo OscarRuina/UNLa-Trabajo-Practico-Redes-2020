@@ -104,14 +104,14 @@ public:
     //metodo comun para recibir mensajes
     void recibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
-        cout<<"El cliente dice: "<<RecvBuff<<endl;
+        //cout<<"El cliente dice: "<<RecvBuff<<endl;
         log(RecvBuff);
         memset(RecvBuff,0,sizeof(RecvBuff));
     }
 
     std::string NewRecibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
-        cout<<"El cliente dice: "<<RecvBuff<<endl;
+        //cout<<"El cliente dice: "<<RecvBuff<<endl;
         log(RecvBuff);
         //------------------------------------
         return std::string(RecvBuff);
@@ -121,18 +121,18 @@ public:
     void enviar(){
         cout<<"Escribe el mensaje a enviar: ";
         cin>>this->SendBuff;
-        log(SendBuff);
+        //log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
-        cout << "Mensaje enviado!" <<endl;
+        //cout << "Mensaje enviado!" <<endl;
     }
 
     void enviar(string msg){
         strcpy(SendBuff, msg.c_str());
-        log(SendBuff);
+        //log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
-        cout << "Mensaje enviado!" <<endl;
+        //cout << "Mensaje enviado!" <<endl;
     }
 
     void cerrarConexion(){
@@ -151,48 +151,53 @@ public:
 
     void Reiniciar(){
         closesocket(comunicacion_socket);
+        closesocket(conexion_socket);
         //conexion_socket=socket(AF_INET,SOCK_STREAM, 0);
-        Servidor();
+        //Servidor();
     }
 };
 
 int main(int argc, char *argv[])
 {
-    Servidor *server = new Servidor();
-    Intentos = 0;
-    server->recibir();
-    int encontrado = 0;
+    while (true){
+        Servidor *server = new Servidor();
 
-    while (encontrado == 0){
-        server->enviar("Ingrese Usuario");
-        string usuario = server->NewRecibir();
-        server->enviar("Ingrese Contrasenia");
-        string Pass = server->NewRecibir();
+        Intentos = 0;
+        server->recibir();
+        int encontrado = 0;
 
-        string UsuPass = usuario + ';' + Pass;
+        while (encontrado == 0){
+            server->enviar("Ingrese Usuario");
+            string usuario = server->NewRecibir();
+            server->enviar("Ingrese Contrasenia");
+            string Pass = server->NewRecibir();
 
-        if ( leerArchivoUsuarios(UsuPass) == 0 ){  //No lo encontro, intento++
-            Intentos = Intentos + 1;               //encontrado seguira en 0 para repetirse
-        }else{
-            encontrado = 1; //Sa
+            string UsuPass = usuario + ';' + Pass;
+
+            if ( leerArchivoUsuarios(UsuPass) == 0 ){  //No lo encontro, intento++
+                Intentos = Intentos + 1;               //encontrado seguira en 0 para repetirse
+            }else{
+                encontrado = 1; //Sa
+            }
+
+            if (Intentos == 3 ){
+                //hizo 3 intentos
+                server->enviar("x - Se supero la cantidad maxima de intentos de ingreso, intente en otro momento");
+                server->Reiniciar(); //Aca hay que hacer un procedimietno que reinicie
+                                    //el servidor y mande a volar el cliente
+                                    //cierra socket y abre socket de vuelta
+                break;
+            }
         }
 
-        if (Intentos == 3 ){
-            //hizo 3 intentos
-            server->enviar("Se supero la cantidad maxima de intentos de ingreso, intente en otro momento");
-            break; //Aca hay que hacer un procedimietno que reinicie
-                   //el servidor y mande a volar el cliente
-                   //cierra socket y abre socket de vuelta
-        }
+        server->cerrarConexion();
     }
-
 
     //while(true){
     //    server->recibir();
     //    server->enviar();
     //}
 
-    server->cerrarConexion();
     return 0;
 }
 
@@ -256,8 +261,8 @@ int leerArchivoUsuarios(string RecvBuff){
    }
    while(getline(usuarios,linea)){
         if(linea.find(usuario) != string::npos){
-            cout<<linea<<endl;                         //aca tendria el usuario y pass encontrado.
-            log("El Usuario: " + linea + " se logeo");
+            //cout<<linea<<endl;                         //aca tendria el usuario y pass encontrado.
+            //log("El Usuario: " + linea + " se logeo");
             encontrado = 1;
         }
    }

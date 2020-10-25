@@ -83,12 +83,22 @@ public:
         cout << "Mensaje enviado!" << endl;
     }
 
+    void enviarInicio(string msg){
+        strcpy(SendBuff, msg.c_str());
+        send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
+        memset(SendBuff, 0, sizeof(SendBuff));
+    }
+
     //metodo comun para recibir mensajes
     void recibir(){
         recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
         cout << "El servidor dice: " << RecvBuff << endl;
+         if (RecvBuff[0] == 'x'){
+           system("PAUSE");
+           exit(0);
+        }
         memset(RecvBuff, 0, sizeof(RecvBuff));
-    } ///ejemplo
+    } //ejemplo
 
 
     void cerrar(){
@@ -105,10 +115,11 @@ public:
 int main(int argc, char *argv[])
 {
     Cliente *cliente = new Cliente();
+    cliente->enviarInicio("InicioSeccion");
 
     while(true){
-        cliente->enviar();
         cliente->recibir();
+        cliente->enviar();
     }
 
     return 0;
