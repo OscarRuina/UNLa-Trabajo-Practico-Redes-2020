@@ -14,7 +14,7 @@ int countLog;
 int Intentos;
 
 int leerArchivoUsuarios(string RecvBuff);
-void log(string msg);
+void log(string archivo,string msg);
 
 class Servidor{
 public:
@@ -31,7 +31,7 @@ public:
     Servidor(){
         countLog = 1;
         RespLogin = 0;
-        log("INICIA SERVIDOR");
+        log("server","INICIA SERVIDOR");
        //Inicializamos la libreria winsock2
        cout<<"Inicializando Winsock..."<<endl;
        resp=WSAStartup(MAKEWORD(1,0),&wsaData);
@@ -105,14 +105,14 @@ public:
     void recibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
         //cout<<"El cliente dice: "<<RecvBuff<<endl;
-        log(RecvBuff);
+        log("server",RecvBuff);
         memset(RecvBuff,0,sizeof(RecvBuff));
     }
 
     std::string NewRecibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
         //cout<<"El cliente dice: "<<RecvBuff<<endl;
-        log(RecvBuff);
+        log("server",RecvBuff);
         //------------------------------------
         return std::string(RecvBuff);
     }
@@ -160,6 +160,7 @@ public:
 int main(int argc, char *argv[])
 {
     while (true){
+        system("cls");
         Servidor *server = new Servidor();
 
         Intentos = 0;
@@ -202,13 +203,14 @@ int main(int argc, char *argv[])
 }
 
 //Funcion Log
-void log(string msg){
+void log(string archivo, string msg){
         // Declaramos las variables
         ofstream log;
         string log_file;
 
+        archivo = archivo + ".log";
         //Abrir el archivo
-        log_file.assign("server.log");
+        log_file.assign(archivo);
         log.open(log_file.c_str(),ios::app);
 
         //Declaramos la fecha/hora del dia.
@@ -257,7 +259,7 @@ int leerArchivoUsuarios(string RecvBuff){
    usuarios.open("usuarios.txt",ios::in); // abro el archivo en modo lectura
    if(usuarios.fail()){
     cout<<"No se pudo abrir el archivo"<<endl;
-    log("No se pudo abrir el archivo");
+    log("server","No se pudo abrir el archivo");
    }
    while(getline(usuarios,linea)){
         if(linea.find(usuario) != string::npos){
@@ -268,7 +270,7 @@ int leerArchivoUsuarios(string RecvBuff){
    }
    if(encontrado == 0){
     cout<<"Usuario o contrasena no encontrado: "<<usuario<<endl;
-    log("Usuario o contrasena no encontrado");
+    log("server","Usuario o contrasena no encontrado");
    }
    usuarios.close();
    return encontrado;
