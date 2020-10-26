@@ -196,13 +196,12 @@ int main(int argc, char *argv[])
         }
 
 
-<<<<<<< Updated upstream
-        while (encontrado == 1){
+
+        /*while (encontrado == 1){
             server->recibir();
             server->enviar();
-        }
+        }*/
 
-=======
         while (true){
 
         //envio menu de opciones
@@ -210,8 +209,8 @@ int main(int argc, char *argv[])
         //recibo respuesta y entro a las subopciones
         string opt = server->NewRecibir();
         generarOpciones(opt,server);
-                }
->>>>>>> Stashed changes
+        }
+
         server->cerrarConexion();
     }
     return 0;

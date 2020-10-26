@@ -33,3 +33,13 @@
 	<ctime>
 	<sstream>
 
+1603677232 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\clientev2\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+
