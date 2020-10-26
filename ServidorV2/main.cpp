@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
             server->enviar("Ingrese Contrasenia");
             string Pass = server->NewRecibir();
 
-            string UsuPass = usuario + ';' + Pass;
+            string UsuPass = usuario + ';' + Pass + ';' ;
 
             if ( leerArchivoUsuarios(UsuPass) == 0 ){  //No lo encontro, intento++
                 Intentos = Intentos + 1;               //encontrado seguira en 0 para repetirse
@@ -185,19 +185,18 @@ int main(int argc, char *argv[])
             if (Intentos == 3 ){
                 //hizo 3 intentos
                 server->enviar("x - Se supero la cantidad maxima de intentos de ingreso, intente en otro momento");
-                server->Reiniciar(); //Aca hay que hacer un procedimietno que reinicie
-                                    //el servidor y mande a volar el cliente
-                                    //cierra socket y abre socket de vuelta
+                server->Reiniciar();
                 break;
             }
         }
 
         server->enviar(menu());
 
-        while (true){
+        while (encontrado == 1){
             server->recibir();
             server->enviar();
         }
+
         server->cerrarConexion();
     }
     return 0;

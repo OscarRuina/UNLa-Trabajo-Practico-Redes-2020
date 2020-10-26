@@ -102,6 +102,7 @@ public:
             string menu = string(RecvBuff);
             cout << str_replace(";", "\n", menu) << endl;
         }
+
         memset(RecvBuff, 0, sizeof(RecvBuff));
     } //ejemplo
 
