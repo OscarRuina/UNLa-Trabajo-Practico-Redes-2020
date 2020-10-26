@@ -39,3 +39,13 @@
 	<ctime>
 	<sstream>
 
+1603676106 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+

@@ -158,6 +158,11 @@ public:
     }
 };
 
+void generarOpciones(std::string opt,Servidor *server);
+void generarViajes(Servidor *server);
+int guardarViajes(string origen,string destino,string fecha,string turno,Servidor* server);
+
+
 int main(int argc, char *argv[])
 {
     while (true){
@@ -190,13 +195,23 @@ int main(int argc, char *argv[])
             }
         }
 
-        server->enviar(menu());
 
+<<<<<<< Updated upstream
         while (encontrado == 1){
             server->recibir();
             server->enviar();
         }
 
+=======
+        while (true){
+
+        //envio menu de opciones
+        server->enviar(menu());
+        //recibo respuesta y entro a las subopciones
+        string opt = server->NewRecibir();
+        generarOpciones(opt,server);
+                }
+>>>>>>> Stashed changes
         server->cerrarConexion();
     }
     return 0;
@@ -281,3 +296,36 @@ int leerArchivoUsuarios(string RecvBuff){
    usuarios.close();
    return encontrado;
 }
+
+void generarOpciones(std::string opt,Servidor *server){
+    switch(opt[0]){
+        case '1':
+        generarViajes(server);
+        break;
+    }
+}
+
+void generarViajes(Servidor *server){
+    server->enviar("Ingrese Origen");
+    string origen = "";
+    server->enviar("Ingrese Origen");
+    string destino = "";
+    server->enviar("Ingrese Fecha");
+    string fecha = "";
+    server->enviar("Ingrese Turno");
+    string turno = "";
+//verifica que el viaje no exista, si no existe, guarda uno nuevo
+    int result = guardarViajes(origen,destino,fecha,turno,server);
+    if(result==0){
+        system("cls");
+        server->enviar("Viaje ya existe");
+    }
+}
+
+int guardarViajes(string origen,string destino,string fecha,string turno,Servidor* server){
+
+return 0;
+}
+
+
+
