@@ -15,6 +15,7 @@ int Intentos;
 
 int leerArchivoUsuarios(string RecvBuff);
 void log(string archivo,string msg);
+string menu();
 
 class Servidor{
 public:
@@ -191,16 +192,22 @@ int main(int argc, char *argv[])
             }
         }
 
+        server->enviar(menu());
+
+        while (true){
+            server->recibir();
+            server->enviar();
+        }
         server->cerrarConexion();
     }
-
-    //while(true){
-    //    server->recibir();
-    //    server->enviar();
-    //}
-
     return 0;
 }
+//funciones del main
+string menu(){
+    string menu = "BIENVENIDO AL SISTEMA;1- Alta Servicio;2- Gestionar Pasajes;3- Ver Registro de Actividades;4- Cerrar Sesion";
+    return menu;
+}
+
 
 //Funcion Log
 void log(string archivo, string msg){

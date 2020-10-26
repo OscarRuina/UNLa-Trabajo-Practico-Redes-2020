@@ -15,7 +15,7 @@ string UsuarioLogin;
 
 void menu();
 void log(string msg);
-
+string& str_replace(const string &search, const string &replace, string &subject);
 
 class Cliente{
 public:
@@ -76,7 +76,7 @@ public:
 
     //metodo comun para enviar mensajes
     void enviar(){
-        cout <<"Escribe el mensaje a enviar: ";
+        cout <<"Escriba respuesta: ";
         cin>>this->SendBuff;
         send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
@@ -93,9 +93,14 @@ public:
     void recibir(){
         recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
         cout << "El servidor dice: " << RecvBuff << endl;
-         if (RecvBuff[0] == 'x'){
+        if (RecvBuff[0] == 'x'){
            system("PAUSE");
            exit(0);
+        }
+        if (RecvBuff[0] == 'B'){
+            system("cls");
+            string menu = string(RecvBuff);
+            cout << str_replace(";", "\n", menu) << endl;
         }
         memset(RecvBuff, 0, sizeof(RecvBuff));
     } //ejemplo
@@ -125,4 +130,30 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+string& str_replace(const string &search, const string &replace, string &subject)
+{
+    string buffer;
 
+    int sealeng = search.length();
+    int strleng = subject.length();
+
+    if (sealeng==0)
+        return subject;//no change
+
+    for(int i=0, j=0; i<strleng; j=0 )
+    {
+        while (i+j<strleng && j<sealeng && subject[i+j]==search[j])
+            j++;
+        if (j==sealeng)//found 'search'
+        {
+            buffer.append(replace);
+            i+=sealeng;
+        }
+        else
+        {
+            buffer.append( &subject[i++], 1);
+        }
+    }
+    subject = buffer;
+    return subject;
+}
