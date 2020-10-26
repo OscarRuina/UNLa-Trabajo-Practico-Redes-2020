@@ -343,10 +343,11 @@ void verRegistroActividades(Servidor *server,std::string usuario){
     log("server","No se pudo abrir el archivo del usuario " + usuario);
     }
     while(getline(archivo,linea)){
-        mensaje = linea + "\n";
+        mensaje = mensaje + linea + "\n";
     }
     archivo.close();
     server->enviar(mensaje);
+
     }
 
 
