@@ -336,7 +336,7 @@ void verRegistroActividades(Servidor *server,std::string usuario){
     ifstream archivo;
     string linea;
     string mensaje;
-    string nombre = usuario + ".txt";
+    string nombre = usuario + ".log";
     archivo.open(nombre.c_str(),ios::in);//
     if(archivo.fail()){
     cout<<"No se pudo abrir el archivo del usuario: "<<usuario<<endl;
