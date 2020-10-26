@@ -166,7 +166,7 @@ int guardarViajes(string origen,string destino,string fecha,string turno,Servido
 int main(int argc, char *argv[])
 {
     while (true){
-        system("cls");
+        //system("cls");
         Servidor *server = new Servidor();
 
         Intentos = 0;
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
             server->enviar();
         }*/
 
-        while (true){
+        while (encontrado == 1){
 
         //envio menu de opciones
         server->enviar(menu());
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
         generarOpciones(opt,server);
         }
 
-        server->cerrarConexion();
+        //server->cerrarConexion();
     }
     return 0;
 }
