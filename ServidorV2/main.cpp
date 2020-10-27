@@ -162,14 +162,13 @@ void generarOpciones(std::string opt,Servidor *server,std::string usuario);
 void generarViajes(Servidor *server);
 int guardarServicio(string viaje);
 void verRegistroActividades(Servidor *server,std::string usuario);
-<<<<<<< HEAD
-void CerrarSesion(Servidor *server,std::string usuario);
-=======
-void generarAsientos(int numeroServicio,Servidor *server);
->>>>>>> dda119a01cd2e221419823a530ca82b286a246f4
 
-int main(int argc, char *argv[])
-{
+void CerrarSesion(Servidor *server,std::string usuario);
+
+void generarAsientos(int numeroServicio,Servidor *server);
+
+
+int main(int argc, char *argv[]){
     while (true){
         //system("cls");
         Servidor *server = new Servidor();
@@ -206,15 +205,12 @@ int main(int argc, char *argv[])
         }
 
 
-<<<<<<< HEAD
+
 
         /*while (encontrado == 1){
             server->recibir();
             server->enviar();
         }*/
-=======
-        while (encontrado == 1){
->>>>>>> dda119a01cd2e221419823a530ca82b286a246f4
 
         //envio menu de opciones
         server->enviar(menu());
@@ -231,6 +227,7 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
+
 //funciones del main
 string menu(){
     string menu = "BIENVENIDO AL SISTEMA;1- Alta Servicio;2- Gestionar Pasajes;3- Ver Registro de Actividades;4- Cerrar Sesion";
@@ -304,24 +301,22 @@ int leerArchivoUsuarios(string RecvBuff){
 void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
-<<<<<<< HEAD
+
             generarViajes(server);
-=======
+
         generarViajes(server);
         break;
         case '2':
->>>>>>> dda119a01cd2e221419823a530ca82b286a246f4
+
             break;
         case '3':
             verRegistroActividades(server,usuario);
             break;
         case '4':
-<<<<<<< HEAD
+
             CerrarSesion(server,usuario);
             break;
         default:
-=======
->>>>>>> dda119a01cd2e221419823a530ca82b286a246f4
             break;
     }
 }
@@ -331,7 +326,6 @@ void CerrarSesion(Servidor *server,std::string usuario){
     log (usuario, "Cierra Sesion");
     server->Reiniciar();
 }
-
 
 void generarViajes(Servidor *server){
     server->enviar("Ingrese Origen");
@@ -390,7 +384,6 @@ void generarAsientos(int numeroServicio,Servidor *server){
 }
 
 
-
 void verRegistroActividades(Servidor *server,std::string usuario){
     log(usuario,"Pulso la Opcion 3");
     //leo el archivo usuario entrante
@@ -409,5 +402,3 @@ void verRegistroActividades(Servidor *server,std::string usuario){
     archivo.close();
     server->enviar(mensaje);
     }
-
-
