@@ -158,7 +158,7 @@ public:
 };
 
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
-void generarViajes(Servidor *server);
+void generarServicios(Servidor *server);
 int guardarServicio(string viaje);
 void verRegistroActividades(Servidor *server,std::string usuario);
 void generarAsientos(int numeroServicio,Servidor *server);
@@ -283,7 +283,7 @@ int leerArchivoUsuarios(string RecvBuff){
 void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
-        generarViajes(server);
+        generarServicios(server);
         break;
         case '2':
             break;
@@ -295,7 +295,9 @@ void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     }
 }
 
-void generarViajes(Servidor *server){
+
+//solicita datos para el nuevo servicio
+void generarServicios(Servidor *server){
     server->enviar("Ingrese Origen");
     string origen = server->NewRecibir();
 
@@ -319,6 +321,8 @@ void generarViajes(Servidor *server){
     }
 }
 
+
+//verifica existencia del servicio , si no existe , añade a la lista
 int guardarServicio(string servicio){
    fstream servicios;
    string linea;
@@ -349,6 +353,12 @@ int guardarServicio(string servicio){
 }
 
 void generarAsientos(int numeroServicio,Servidor *server){
+    for(int i = 0;i<4;i++){
+        for(int j = 0 ; j < 20 ; j++){
+
+        }
+    }
+
 }
 
 
