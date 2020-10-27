@@ -237,9 +237,9 @@ void log(string archivo, string msg){
         ofstream log;
         string log_file;
         string nombre = archivo;
-        archivo = archivo + ".log";
+        nombre = archivo + ".log";
         //Abrir el archivo
-        log_file.assign(archivo);
+        log_file.assign(nombre);
         log.open(log_file.c_str(),ios::app);
 
         //Declaramos la fecha/hora del dia.
