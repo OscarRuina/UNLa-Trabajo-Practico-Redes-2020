@@ -24,7 +24,7 @@ public:
     struct sockaddr_in servidor;
     struct hostent *hp;
     int resp;
-    char SendBuff[1024],RecvBuff[1024],user[1024],password[1024];
+    char SendBuff[102400],RecvBuff[102400],user[1024],password[1024];
 
     Cliente(){
         countLog = 1;

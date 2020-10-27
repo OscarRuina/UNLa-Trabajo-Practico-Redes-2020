@@ -26,7 +26,7 @@ public:
     struct sockaddr_in cliente;//direccion del socket cliente
     struct hostent *hp;
     int resp,stsize;
-    char SendBuff[1024],RecvBuff[1024];//enviar y recibir mensajes
+    char SendBuff[102400],RecvBuff[102400];//enviar y recibir mensajes
     int RespLogin;
 
     Servidor(){
@@ -130,6 +130,7 @@ public:
 
     void enviar(string msg){
         strcpy(SendBuff, msg.c_str());
+        //cout<<"Envia un mensaje"<<endl;;
         //log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
@@ -162,6 +163,7 @@ void generarOpciones(std::string opt,Servidor *server,std::string usuario);
 void generarViajes(Servidor *server);
 int guardarViajes(string origen,string destino,string fecha,string turno,Servidor* server);
 void verRegistroActividades(Servidor *server,std::string usuario);
+void CerrarSesion(Servidor *server,std::string usuario);
 
 int main(int argc, char *argv[])
 {
@@ -185,7 +187,11 @@ int main(int argc, char *argv[])
             if ( leerArchivoUsuarios(UsuPass) == 0 ){  //No lo encontro, intento++
                 Intentos = Intentos + 1;               //encontrado seguira en 0 para repetirse
             }else{
-                encontrado = 1; //Sa
+                encontrado = 1;
+                log(usuario,"==================");
+                log(usuario,"INICIO SESION");
+                log(usuario,"==================");
+
             }
 
             if (Intentos == 3 ){
@@ -203,13 +209,15 @@ int main(int argc, char *argv[])
             server->enviar();
         }*/
 
-        while (encontrado == 1){
-
         //envio menu de opciones
         server->enviar(menu());
-        //recibo respuesta y entro a las subopciones
-        string opt = server->NewRecibir();
-        generarOpciones(opt,server,usuario);
+        while (encontrado == 1){
+            //recibo respuesta y entro a las subopciones
+            string opt = server->NewRecibir();
+            generarOpciones(opt,server,usuario);
+            if ( opt == "4" ){
+                break;
+            }
         }
 
         //server->cerrarConexion();
@@ -228,7 +236,7 @@ void log(string archivo, string msg){
         // Declaramos las variables
         ofstream log;
         string log_file;
-
+        string nombre = archivo;
         archivo = archivo + ".log";
         //Abrir el archivo
         log_file.assign(archivo);
@@ -300,13 +308,25 @@ int leerArchivoUsuarios(string RecvBuff){
 void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
-        generarViajes(server);
-        break;
+            generarViajes(server);
+            break;
         case '3':
             verRegistroActividades(server,usuario);
             break;
+        case '4':
+            CerrarSesion(server,usuario);
+            break;
+        default:
+            break;
     }
 }
+
+void CerrarSesion(Servidor *server,std::string usuario){
+    server->enviar("x - Cierra Sesion");
+    log (usuario, "Cierra Sesion");
+    server->Reiniciar();
+}
+
 
 void generarViajes(Servidor *server){
     server->enviar("Ingrese Origen");
@@ -339,15 +359,14 @@ void verRegistroActividades(Servidor *server,std::string usuario){
     string nombre = usuario + ".log";
     archivo.open(nombre.c_str(),ios::in);//
     if(archivo.fail()){
-    cout<<"No se pudo abrir el archivo del usuario: "<<usuario<<endl;
-    log("server","No se pudo abrir el archivo del usuario " + usuario);
+        cout<<"No se pudo abrir el archivo del usuario: "<<usuario<<endl;
+        log("server","No se pudo abrir el archivo del usuario " + usuario);
     }
     while(getline(archivo,linea)){
-        mensaje = mensaje + linea + "\n";
+        mensaje = mensaje + "\n" + linea ;
     }
     archivo.close();
     server->enviar(mensaje);
-
     }
 
 
