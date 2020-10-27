@@ -120,7 +120,6 @@ public:
 
     //metodo comun para enviar mensajes
     void enviar(){
-        cout<<"Escribe el mensaje a enviar: ";
         cin>>this->SendBuff;
         //log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
@@ -161,9 +160,13 @@ public:
 
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
 void generarViajes(Servidor *server);
-int guardarViajes(string origen,string destino,string fecha,string turno,Servidor* server);
+int guardarServicio(string viaje);
 void verRegistroActividades(Servidor *server,std::string usuario);
+<<<<<<< HEAD
 void CerrarSesion(Servidor *server,std::string usuario);
+=======
+void generarAsientos(int numeroServicio,Servidor *server);
+>>>>>>> dda119a01cd2e221419823a530ca82b286a246f4
 
 int main(int argc, char *argv[])
 {
@@ -203,11 +206,15 @@ int main(int argc, char *argv[])
         }
 
 
+<<<<<<< HEAD
 
         /*while (encontrado == 1){
             server->recibir();
             server->enviar();
         }*/
+=======
+        while (encontrado == 1){
+>>>>>>> dda119a01cd2e221419823a530ca82b286a246f4
 
         //envio menu de opciones
         server->enviar(menu());
@@ -220,7 +227,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        //server->cerrarConexion();
+
     }
     return 0;
 }
@@ -262,17 +269,6 @@ void log(string archivo, string msg){
             log << anio <<"-"<< mes <<"-"<< dia <<"_"<< hora <<":"<< minu << ": " << msg << std::endl;
         }
 
-        // Creamos el archivo de log
-        //log_file.assign("server.log");
-        //log.open(log_file.c_str());
-
-        // Escribimos una línea con el nombre del archivo
-        //log << "2020-10-15: " << msg << std::endl;
-
-        // Escribimos en el log
-        //log << "Esta es una linea del log" << std::endl;
-
-
         // Cerramos el archivo
         log.close();
     }
@@ -308,15 +304,24 @@ int leerArchivoUsuarios(string RecvBuff){
 void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
+<<<<<<< HEAD
             generarViajes(server);
+=======
+        generarViajes(server);
+        break;
+        case '2':
+>>>>>>> dda119a01cd2e221419823a530ca82b286a246f4
             break;
         case '3':
             verRegistroActividades(server,usuario);
             break;
         case '4':
+<<<<<<< HEAD
             CerrarSesion(server,usuario);
             break;
         default:
+=======
+>>>>>>> dda119a01cd2e221419823a530ca82b286a246f4
             break;
     }
 }
@@ -330,25 +335,61 @@ void CerrarSesion(Servidor *server,std::string usuario){
 
 void generarViajes(Servidor *server){
     server->enviar("Ingrese Origen");
-    string origen = "";
+    string origen = server->NewRecibir();
+
     server->enviar("Ingrese Origen");
-    string destino = "";
+    string destino = server->NewRecibir();
+
     server->enviar("Ingrese Fecha");
-    string fecha = "";
+    string fecha = server->NewRecibir();
+
     server->enviar("Ingrese Turno");
-    string turno = "";
+    string turno =  server->NewRecibir();
+    string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
+
 //verifica que el viaje no exista, si no existe, guarda uno nuevo
-    int result = guardarViajes(origen,destino,fecha,turno,server);
-    if(result==0){
+    int numeroServicio = guardarServicio(servicio);
+    if(numeroServicio==0){
         system("cls");
         server->enviar("Viaje ya existe");
+    }else{
+        generarAsientos(numeroServicio,server);
     }
 }
 
-int guardarViajes(string origen,string destino,string fecha,string turno,Servidor* server){
+int guardarServicio(string servicio){
+   fstream servicios;
+   string linea;
+   int encontrado  = -1;
+   int numeroServicio = 0;
+   servicios.open("servicios.txt",ios::out | ios::in ); // abro el archivo en modo lectura
+   if(servicios.fail()){
+    cout<<"No se pudo abrir el archivo"<<endl;
+    log("server","No se pudo abrir el archivo servicios");
+   }
+//verifica que no exista el servicio
+   while(getline(servicios,linea)){
+        if(linea.find(servicio) != string::npos){
+            encontrado = 0;
+        }
+        numeroServicio++;
+   }
+   if(encontrado != 0){
+    //escribir servicio
+    string fullService = numeroServicio+";"+servicio+"\n";
+    servicios << fullService<< endl;
 
-return 0;
+    servicios.close();
+    return numeroServicio;
+   }
+   servicios.close();
+   return encontrado;
 }
+
+void generarAsientos(int numeroServicio,Servidor *server){
+}
+
+
 
 void verRegistroActividades(Servidor *server,std::string usuario){
     log(usuario,"Pulso la Opcion 3");
