@@ -7,11 +7,13 @@
 #include <ctime>
 #include <sstream>
 
+
 using namespace std;
 
 int countLog;
 int RespLogin;
 string UsuarioLogin;
+
 
 void menu();
 void log(string msg);
@@ -122,6 +124,7 @@ int main(int argc, char *argv[])
 {
     Cliente *cliente = new Cliente();
     cliente->enviarInicio("InicioSeccion");
+
 
     while(true){
         cliente->recibir();

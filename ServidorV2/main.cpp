@@ -12,6 +12,8 @@ using namespace std;
 
 int countLog;
 int Intentos;
+unsigned t0, t1;
+double times;
 
 int leerArchivoUsuarios(string RecvBuff);
 void log(string archivo,string msg);
@@ -112,6 +114,12 @@ public:
 
     std::string NewRecibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
+        t1 = clock();
+        times = (double(t1-t0)/CLOCKS_PER_SEC);
+        cout << "Tiempo de respuesta del cliente: " << times << endl;
+
+        t0 = clock();
+        t1 = clock();
         //cout<<"El cliente dice: "<<RecvBuff<<endl;
         log("server",RecvBuff);
         //------------------------------------
@@ -128,12 +136,17 @@ public:
     }
 
     void enviar(string msg){
-        strcpy(SendBuff, msg.c_str());
+        if ( times < 10 ) {             //tiempo en segundos
+            strcpy(SendBuff, msg.c_str());
+        }else{
+           strcpy(SendBuff, "x - Tiempo de inactividad superado, se cerrara la conexion");
+        }
         //cout<<"Envia un mensaje"<<endl;;
         //log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
         //cout << "Mensaje enviado!" <<endl;
+
     }
 
     void cerrarConexion(){
@@ -177,6 +190,9 @@ int main(int argc, char *argv[]){
         server->recibir();
         int encontrado = 0;
         string usuario;//la declare aca para mandarla por parametro para el menu, opcion 3
+
+        t0 = clock();
+        t1 = clock();
 
         while (encontrado == 0){
             server->enviar("Ingrese Usuario");
@@ -222,8 +238,6 @@ int main(int argc, char *argv[]){
                 break;
             }
         }
-
-
     }
     return 0;
 }
