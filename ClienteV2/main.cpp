@@ -7,11 +7,13 @@
 #include <ctime>
 #include <sstream>
 
+
 using namespace std;
 
 int countLog;
 int RespLogin;
 string UsuarioLogin;
+
 
 void menu();
 void log(string msg);
@@ -24,7 +26,7 @@ public:
     struct sockaddr_in servidor;
     struct hostent *hp;
     int resp;
-    char SendBuff[1024],RecvBuff[1024],user[1024],password[1024];
+    char SendBuff[102400],RecvBuff[102400],user[1024],password[1024];
 
     Cliente(){
         countLog = 1;
@@ -122,6 +124,7 @@ int main(int argc, char *argv[])
 {
     Cliente *cliente = new Cliente();
     cliente->enviarInicio("InicioSeccion");
+
 
     while(true){
         cliente->recibir();
