@@ -171,9 +171,30 @@ public:
     }
 };
 
+class Servicio{
+    string origen;
+    string destino;
+    string fecha;
+    string turno;
+    //string matriz[7][22];
+public:
+    Servicio(){}
+    Servicio(string origen,string destino,string fecha,string turno){
+        this->origen = origen;
+        this->destino = destino;
+        this->fecha = fecha;
+        this->turno = turno;
+        //
+    }
+    void servicioLectura(){
+        cout<<"Origen: " << this->origen << ";"  << "Destino: " << this->destino << ";" << "Fecha: " << this->fecha << ";" << "Turno: " << this->turno << ";"<<endl;
+   }
+};
+
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
 void generarViajes(Servidor *server);
-int guardarServicio(string viaje);
+//int guardarServicio(string viaje);
+int guardarServicio(Servicio ser);
 void verRegistroActividades(Servidor *server,std::string usuario);
 
 void CerrarSesion(Servidor *server,std::string usuario);
@@ -316,7 +337,7 @@ void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
 
-            generarViajes(server);
+           // generarViajes(server);
 
         generarViajes(server);
         break;
@@ -342,21 +363,21 @@ void CerrarSesion(Servidor *server,std::string usuario){
 }
 
 void generarViajes(Servidor *server){
-    server->enviar("Ingrese Origen");
+    server->enviar("Ingrese Origen: BA(Buenos Aires) o MP(Mar del Plata)");
     string origen = server->NewRecibir();
 
-    server->enviar("Ingrese Origen");
+    server->enviar("Ingrese Destino: BA(Buenos Aires) o MP(Mar del Plata)");
     string destino = server->NewRecibir();
 
-    server->enviar("Ingrese Fecha");
+    server->enviar("Ingrese Fecha de la forma DD/MM/AAAA");
     string fecha = server->NewRecibir();
 
-    server->enviar("Ingrese Turno");
+    server->enviar("Ingrese Turno: TM(Turno Mañana) , TT(Turno Tarde) , TN(Turno Noche)");
     string turno =  server->NewRecibir();
-    string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
-
-//verifica que el viaje no exista, si no existe, guarda uno nuevo
-    int numeroServicio = guardarServicio(servicio);
+    //string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
+    Servicio ser(origen,destino,fecha,turno);
+    //verifica que el viaje no exista, si no existe, guarda uno nuevo
+    int numeroServicio = guardarServicio(ser);
     if(numeroServicio==0){
         system("cls");
         server->enviar("Viaje ya existe");
@@ -364,37 +385,28 @@ void generarViajes(Servidor *server){
         generarAsientos(numeroServicio,server);
     }
 }
-
-int guardarServicio(string servicio){
-   fstream servicios;
-   string linea;
-   int encontrado  = -1;
-   int numeroServicio = 0;
-   servicios.open("servicios.txt",ios::out | ios::in ); // abro el archivo en modo lectura
-   if(servicios.fail()){
+//int guardarServicio(string servicio)
+int guardarServicio(Servicio ser){
+   int encontrado  = 0;
+   fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::trunc);
+   if(!file.is_open()){
     cout<<"No se pudo abrir el archivo"<<endl;
     log("server","No se pudo abrir el archivo servicios");
-   }
-//verifica que no exista el servicio
-   while(getline(servicios,linea)){
-        if(linea.find(servicio) != string::npos){
-            encontrado = 0;
-        }
-        numeroServicio++;
-   }
-   if(encontrado != 0){
-    //escribir servicio
-    string fullService = numeroServicio+";"+servicio+"\n";
-    servicios << fullService<< endl;
+   }else{
+      string linea;
 
-    servicios.close();
-    return numeroServicio;
-   }
-   servicios.close();
-   return encontrado;
+      //int numeroServicio = 0;
+      //leo el archivo en busca de un objeto igual
+      file.write((char*)&ser,sizeof(Servicio));
+      file.close();
+      encontrado = 1;
+      }
+      return encontrado;
 }
 
 void generarAsientos(int numeroServicio,Servidor *server){
+    cout<<"LLego Hasta Aca"<<endl;
+
 }
 
 
