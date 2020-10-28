@@ -397,9 +397,18 @@ int guardarServicio(Servicio ser){
 
       //int numeroServicio = 0;
       //leo el archivo en busca de un objeto igual
+
+        file.seekg(0); // leo desde el principio
+        Servicio ser2;
+        file.read((char*)&ser2,sizeof(Servicio));
+        ser.servicioLectura();
+        ser2.servicioLectura();
+
+
+      //si no lo encontro escribe en el archivo
       file.write((char*)&ser,sizeof(Servicio));
       file.close();
-      encontrado = 1;
+      encontrado = 1; // para que llegue al metodo generarAsientos
       }
       return encontrado;
 }
