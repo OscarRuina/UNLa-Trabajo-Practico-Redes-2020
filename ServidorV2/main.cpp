@@ -171,9 +171,30 @@ public:
     }
 };
 
+class Servicio{
+public:
+
+    string origen;
+    string destino;
+    string fecha;
+    string turno;
+    //string bus[7][22];
+
+
+
+    Servicio(string origen,string destino,string fecha,string turno){
+        this->origen = origen;
+        this->destino = destino;
+        this->fecha = fecha;
+        this->turno = turno;
+    }
+};
+
+
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
 void generarViajes(Servidor *server);
-int guardarServicio(string viaje);
+//int guardarServicio(string viaje);
+int guardarServicio(Servicio ser);
 void verRegistroActividades(Servidor *server,std::string usuario);
 
 void CerrarSesion(Servidor *server,std::string usuario);
@@ -316,7 +337,7 @@ void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
 
-            generarViajes(server);
+            //generarViajes(server);
 
         generarViajes(server);
         break;
@@ -345,7 +366,7 @@ void generarViajes(Servidor *server){
     server->enviar("Ingrese Origen");
     string origen = server->NewRecibir();
 
-    server->enviar("Ingrese Origen");
+    server->enviar("Ingrese Destino");
     string destino = server->NewRecibir();
 
     server->enviar("Ingrese Fecha");
@@ -353,10 +374,10 @@ void generarViajes(Servidor *server){
 
     server->enviar("Ingrese Turno");
     string turno =  server->NewRecibir();
-    string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
-
-//verifica que el viaje no exista, si no existe, guarda uno nuevo
-    int numeroServicio = guardarServicio(servicio);
+    //string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
+    Servicio ser(origen,destino,fecha,turno);
+    //verifica que el viaje no exista, si no existe, guarda uno nuevo
+    int numeroServicio = guardarServicio(ser);
     if(numeroServicio==0){
         system("cls");
         server->enviar("Viaje ya existe");
@@ -365,7 +386,7 @@ void generarViajes(Servidor *server){
     }
 }
 
-int guardarServicio(string servicio){
+/*int guardarServicio(string servicio){
    fstream servicios;
    string linea;
    int encontrado  = -1;
@@ -392,9 +413,31 @@ int guardarServicio(string servicio){
    }
    servicios.close();
    return encontrado;
+}*/
+
+int guardarServicio(Servicio ser){
+   int encontrado  = 0;
+   fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::trunc);
+   if(!file.is_open()){
+    cout<<"No se pudo abrir el archivo"<<endl;
+    log("server","No se pudo abrir el archivo servicios");
+   }else{
+      //string linea;
+
+      //int numeroServicio = 0;
+      //leo el archivo en busca de un objeto igual
+      //file.write((char)&ser,sizeof(Servicio));
+      file.write((char*)&ser , sizeof(Servicio));
+      file.close();
+      encontrado = 1;
+      }
+      return encontrado;
+
 }
 
+
 void generarAsientos(int numeroServicio,Servidor *server){
+    cout<<"Llegue hasta aca"<<endl;
 }
 
 
