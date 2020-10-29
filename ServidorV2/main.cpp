@@ -320,6 +320,7 @@ void generarServicios(Servidor *server){
         generarAsientos(numeroServicio,server);
     }
 }
+<<<<<<< HEAD
 
 
 //verifica existencia del servicio , si no existe , añade a la lista
@@ -350,6 +351,25 @@ int guardarServicio(string servicio){
    }
    servicios.close();
    return encontrado;
+=======
+//int guardarServicio(string servicio)
+int guardarServicio(Servicio ser){
+   int encontrado  = 0;
+   fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::trunc);
+   if(!file.is_open()){
+    cout<<"No se pudo abrir el archivo"<<endl;
+    log("server","No se pudo abrir el archivo servicios");
+   }else{
+      string linea;
+
+      //int numeroServicio = 0;
+      //leo el archivo en busca de un objeto igual
+      file.write((char*)&ser,sizeof(Servicio));
+      file.close();
+      encontrado = 1;
+      }
+      return encontrado;
+>>>>>>> parent of ed7f53a... prueba de lectura
 }
 
 void generarAsientos(int numeroServicio,Servidor *server){
