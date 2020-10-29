@@ -12,6 +12,8 @@ using namespace std;
 
 int countLog;
 int Intentos;
+unsigned t0, t1;
+double times;
 
 int leerArchivoUsuarios(string RecvBuff);
 void log(string archivo,string msg);
@@ -26,7 +28,7 @@ public:
     struct sockaddr_in cliente;//direccion del socket cliente
     struct hostent *hp;
     int resp,stsize;
-    char SendBuff[1024],RecvBuff[1024];//enviar y recibir mensajes
+    char SendBuff[102400],RecvBuff[102400];//enviar y recibir mensajes
     int RespLogin;
 
     Servidor(){
@@ -112,6 +114,12 @@ public:
 
     std::string NewRecibir(){
         recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
+        t1 = clock();
+        times = (double(t1-t0)/CLOCKS_PER_SEC);
+        cout << "Tiempo de respuesta del cliente: " << times << endl;
+
+        t0 = clock();
+        t1 = clock();
         //cout<<"El cliente dice: "<<RecvBuff<<endl;
         log("server",RecvBuff);
         //------------------------------------
@@ -128,11 +136,17 @@ public:
     }
 
     void enviar(string msg){
-        strcpy(SendBuff, msg.c_str());
+        if ( times < 10 ) {             //tiempo en segundos
+            strcpy(SendBuff, msg.c_str());
+        }else{
+           strcpy(SendBuff, "x - Tiempo de inactividad superado, se cerrara la conexion");
+        }
+        //cout<<"Envia un mensaje"<<endl;;
         //log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
         //cout << "Mensaje enviado!" <<endl;
+
     }
 
     void cerrarConexion(){
@@ -157,36 +171,17 @@ public:
     }
 };
 
-class Servicio{
-public:
-    string origen;
-    string destino;
-    string fecha;
-    string turno;
-    //string bus[7][22];
-
-    Servicio(){}
-
-    Servicio(string origen,string destino,string fecha,string turno){
-        this->origen = origen;
-        this->destino = destino;
-        this->fecha = fecha;
-        this->turno = turno;
-    }
-
-
-
-};
-
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
-void generarServicios(Servidor *server);
+void generarViajes(Servidor *server);
 int guardarServicio(string viaje);
-int guardarServicio(Servicio ser);
 void verRegistroActividades(Servidor *server,std::string usuario);
+
+void CerrarSesion(Servidor *server,std::string usuario);
+
 void generarAsientos(int numeroServicio,Servidor *server);
 
-int main(int argc, char *argv[])
-{
+
+int main(int argc, char *argv[]){
     while (true){
         //system("cls");
         Servidor *server = new Servidor();
@@ -195,6 +190,9 @@ int main(int argc, char *argv[])
         server->recibir();
         int encontrado = 0;
         string usuario;//la declare aca para mandarla por parametro para el menu, opcion 3
+
+        t0 = clock();
+        t1 = clock();
 
         while (encontrado == 0){
             server->enviar("Ingrese Usuario");
@@ -207,7 +205,11 @@ int main(int argc, char *argv[])
             if ( leerArchivoUsuarios(UsuPass) == 0 ){  //No lo encontro, intento++
                 Intentos = Intentos + 1;               //encontrado seguira en 0 para repetirse
             }else{
-                encontrado = 1; //Sa
+                encontrado = 1;
+                log(usuario,"==================");
+                log(usuario,"INICIO SESION");
+                log(usuario,"==================");
+
             }
 
             if (Intentos == 3 ){
@@ -219,19 +221,27 @@ int main(int argc, char *argv[])
         }
 
 
-        while (encontrado == 1){
+
+
+        /*while (encontrado == 1){
+            server->recibir();
+            server->enviar();
+        }*/
 
         //envio menu de opciones
         server->enviar(menu());
-        //recibo respuesta y entro a las subopciones
-        string opt = server->NewRecibir();
-        generarOpciones(opt,server,usuario);
+        while (encontrado == 1){
+            //recibo respuesta y entro a las subopciones
+            string opt = server->NewRecibir();
+            generarOpciones(opt,server,usuario);
+            if ( opt == "4" ){
+                break;
+            }
         }
-
-
     }
     return 0;
 }
+
 //funciones del main
 string menu(){
     string menu = "BIENVENIDO AL SISTEMA;1- Alta Servicio;2- Gestionar Pasajes;3- Ver Registro de Actividades;4- Cerrar Sesion";
@@ -244,10 +254,10 @@ void log(string archivo, string msg){
         // Declaramos las variables
         ofstream log;
         string log_file;
-
-        archivo = archivo + ".log";
+        string nombre = archivo;
+        nombre = archivo + ".log";
         //Abrir el archivo
-        log_file.assign(archivo);
+        log_file.assign(nombre);
         log.open(log_file.c_str(),ios::app);
 
         //Declaramos la fecha/hora del dia.
@@ -305,25 +315,37 @@ int leerArchivoUsuarios(string RecvBuff){
 void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
-        generarServicios(server);
+
+            generarViajes(server);
+
+        generarViajes(server);
         break;
         case '2':
+
             break;
         case '3':
             verRegistroActividades(server,usuario);
             break;
         case '4':
+
+            CerrarSesion(server,usuario);
+            break;
+        default:
             break;
     }
 }
 
+void CerrarSesion(Servidor *server,std::string usuario){
+    server->enviar("x - Cierra Sesion");
+    log (usuario, "Cierra Sesion");
+    server->Reiniciar();
+}
 
-//solicita datos para el nuevo servicio
-void generarServicios(Servidor *server){
+void generarViajes(Servidor *server){
     server->enviar("Ingrese Origen");
     string origen = server->NewRecibir();
 
-    server->enviar("Ingrese Destino");
+    server->enviar("Ingrese Origen");
     string destino = server->NewRecibir();
 
     server->enviar("Ingrese Fecha");
@@ -331,10 +353,10 @@ void generarServicios(Servidor *server){
 
     server->enviar("Ingrese Turno");
     string turno =  server->NewRecibir();
-   // string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
-   Servicio ser(origen,destino,fecha,turno);
+    string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
+
 //verifica que el viaje no exista, si no existe, guarda uno nuevo
-    int numeroServicio = guardarServicio(ser);
+    int numeroServicio = guardarServicio(servicio);
     if(numeroServicio==0){
         system("cls");
         server->enviar("Viaje ya existe");
@@ -343,9 +365,6 @@ void generarServicios(Servidor *server){
     }
 }
 
-
-
-//verifica existencia del servicio , si no existe , añade a la lista
 int guardarServicio(string servicio){
    fstream servicios;
    string linea;
@@ -375,34 +394,8 @@ int guardarServicio(string servicio){
    return encontrado;
 }
 
-int guardarServicio(Servicio ser){
-   int encontrado  = 0;
-   fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::trunc);
-   if(!file.is_open()){
-    cout<<"No se pudo abrir el archivo"<<endl;
-    log("server","No se pudo abrir el archivo servicios");
-   }else{
-      string linea;
-
-      //int numeroServicio = 0;
-      //leo el archivo en busca de un objeto igual
-      file.write((char*)&ser,sizeof(Servicio));
-      file.close();
-      encontrado = 1;
-      }
-      return encontrado;
-
-}
-
 void generarAsientos(int numeroServicio,Servidor *server){
-    for(int i = 0;i<4;i++){
-        for(int j = 0 ; j < 20 ; j++){
-
-        }
-    }
-
 }
-
 
 
 void verRegistroActividades(Servidor *server,std::string usuario){
@@ -414,15 +407,12 @@ void verRegistroActividades(Servidor *server,std::string usuario){
     string nombre = usuario + ".log";
     archivo.open(nombre.c_str(),ios::in);//
     if(archivo.fail()){
-    cout<<"No se pudo abrir el archivo del usuario: "<<usuario<<endl;
-    log("server","No se pudo abrir el archivo del usuario " + usuario);
+        cout<<"No se pudo abrir el archivo del usuario: "<<usuario<<endl;
+        log("server","No se pudo abrir el archivo del usuario " + usuario);
     }
     while(getline(archivo,linea)){
-        mensaje = mensaje + linea + "\n";
+        mensaje = mensaje + "\n" + linea ;
     }
     archivo.close();
     server->enviar(mensaje);
-
     }
-
-
