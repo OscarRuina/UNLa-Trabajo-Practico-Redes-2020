@@ -123,7 +123,7 @@ public:
 int main(int argc, char *argv[])
 {
     Cliente *cliente = new Cliente();
-    cliente->enviarInicio("InicioSeccion");
+    cliente->enviarInicio("InicioSesion");
 
 
     while(true){

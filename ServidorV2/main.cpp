@@ -157,9 +157,31 @@ public:
     }
 };
 
+class Servicio{
+public:
+    string origen;
+    string destino;
+    string fecha;
+    string turno;
+    //string bus[7][22];
+
+    Servicio(){}
+
+    Servicio(string origen,string destino,string fecha,string turno){
+        this->origen = origen;
+        this->destino = destino;
+        this->fecha = fecha;
+        this->turno = turno;
+    }
+
+
+
+};
+
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
 void generarServicios(Servidor *server);
 int guardarServicio(string viaje);
+int guardarServicio(Servicio ser);
 void verRegistroActividades(Servidor *server,std::string usuario);
 void generarAsientos(int numeroServicio,Servidor *server);
 
@@ -301,7 +323,7 @@ void generarServicios(Servidor *server){
     server->enviar("Ingrese Origen");
     string origen = server->NewRecibir();
 
-    server->enviar("Ingrese Origen");
+    server->enviar("Ingrese Destino");
     string destino = server->NewRecibir();
 
     server->enviar("Ingrese Fecha");
@@ -309,10 +331,10 @@ void generarServicios(Servidor *server){
 
     server->enviar("Ingrese Turno");
     string turno =  server->NewRecibir();
-    string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
-
+   // string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
+   Servicio ser(origen,destino,fecha,turno);
 //verifica que el viaje no exista, si no existe, guarda uno nuevo
-    int numeroServicio = guardarServicio(servicio);
+    int numeroServicio = guardarServicio(ser);
     if(numeroServicio==0){
         system("cls");
         server->enviar("Viaje ya existe");
@@ -320,7 +342,7 @@ void generarServicios(Servidor *server){
         generarAsientos(numeroServicio,server);
     }
 }
-<<<<<<< HEAD
+
 
 
 //verifica existencia del servicio , si no existe , añade a la lista
@@ -351,8 +373,8 @@ int guardarServicio(string servicio){
    }
    servicios.close();
    return encontrado;
-=======
-//int guardarServicio(string servicio)
+}
+
 int guardarServicio(Servicio ser){
    int encontrado  = 0;
    fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::trunc);
@@ -369,7 +391,7 @@ int guardarServicio(Servicio ser){
       encontrado = 1;
       }
       return encontrado;
->>>>>>> parent of ed7f53a... prueba de lectura
+
 }
 
 void generarAsientos(int numeroServicio,Servidor *server){
