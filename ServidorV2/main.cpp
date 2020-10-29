@@ -197,6 +197,21 @@ public:
         this->turno = turno;
     }
 
+    void mostrar(){
+        cout<<"Origen: " << origen << "\nDestino: " << destino << "\nFecha: " << fecha << "\nTurno: " << turno<<endl;
+    }
+
+    void matriz(){
+      int filas = (sizeof(bus)/sizeof(bus[0]));
+      int columnas = (sizeof(bus[0])/sizeof(bus[0][0]));
+      for(int i = 0; i < filas; i++){
+        for(int j = 0; j < columnas; j++){
+            cout<<bus[i][j];
+        }
+        cout<<"\n";
+      }
+    }
+
 
 };
 
@@ -433,10 +448,12 @@ int guardarServicio(Servicio *ser){
     log("server","No se pudo abrir el archivo servicios");
    }else{
       //string linea;
-
       //int numeroServicio = 0;
       //leo el archivo en busca de un objeto igual
-      //file.write((char)&ser,sizeof(Servicio));
+      //file.read((char*)&ser,sizeof(Servicio));
+
+
+
       file.write((char*)&ser , sizeof(Servicio));
       file.close();
       encontrado = 1;
@@ -448,14 +465,8 @@ int guardarServicio(Servicio *ser){
 
 void generarAsientos(int numeroServicio,Servidor *server,Servicio *ser){
 
-    int filas = (sizeof(ser->bus)/sizeof(ser->bus[0]));
-    int columnas = (sizeof(ser->bus[0])/sizeof(ser->bus[0][0]));
-    for(int i = 0; i < filas; i++){
-        for(int j = 0; j < columnas; j++){
-            cout<<ser->bus[i][j];
-        }
-        cout<<"\n";
-    }
+    ser->mostrar();
+    ser->matriz();
 
     server->enviar("Acientos generados");
 }
