@@ -427,7 +427,7 @@ void generarViajes(Servidor *server){
 
 int guardarServicio(Servicio *ser){
    int encontrado  = 0;
-   fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::trunc);
+   fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::app);
    if(!file.is_open()){
     cout<<"No se pudo abrir el archivo"<<endl;
     log("server","No se pudo abrir el archivo servicios");
