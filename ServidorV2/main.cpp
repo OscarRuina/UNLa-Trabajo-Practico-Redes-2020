@@ -173,12 +173,20 @@ public:
 
 class Servicio{
 public:
-
+    //int id;
     string origen;
     string destino;
     string fecha;
     string turno;
-    //string bus[7][22];
+    string bus[7][43] = {
+                           {" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","2"} ,
+                           {" "," ","|"," ","1"," ","2"," ","3"," ","4"," ","5"," ","6"," ","7"," ","8"," ","9"," ","0"," ","1"," ","2"," ","3"," ","4"," ","5"," ","6"," ","7"," ","8"," ","9"," ","0"} ,
+                           {"-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"} ,
+                           {"A"," ","|"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"} ,
+                           {"B"," ","|"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"} ,
+                           {" "," ","|","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"} ,
+                           {"C"," ","|"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"}
+                        };
 
 
 
@@ -188,18 +196,20 @@ public:
         this->fecha = fecha;
         this->turno = turno;
     }
+
+
 };
 
 
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
 void generarViajes(Servidor *server);
 //int guardarServicio(string viaje);
-int guardarServicio(Servicio ser);
+int guardarServicio(Servicio *ser);
 void verRegistroActividades(Servidor *server,std::string usuario);
 
 void CerrarSesion(Servidor *server,std::string usuario);
 
-void generarAsientos(int numeroServicio,Servidor *server);
+void generarAsientos(int numeroServicio,Servidor *server,Servicio *ser);
 
 
 int main(int argc, char *argv[]){
@@ -363,26 +373,26 @@ void CerrarSesion(Servidor *server,std::string usuario){
 }
 
 void generarViajes(Servidor *server){
-    server->enviar("Ingrese Origen");
+    server->enviar("Ingrese Origen: BA(Buenos Aires) o MP(Mar del Plata) ");
     string origen = server->NewRecibir();
 
-    server->enviar("Ingrese Destino");
+    server->enviar("Ingrese Destino: BA(Buenos Aires) o MP(Mar del Plata) ");
     string destino = server->NewRecibir();
 
-    server->enviar("Ingrese Fecha");
+    server->enviar("Ingrese Fecha con el formato DD/MM/AAAA: ");
     string fecha = server->NewRecibir();
 
-    server->enviar("Ingrese Turno");
+    server->enviar("Ingrese Turno: TM(Turno Mañana) - TT(Turno Tarde) - TN(Turno Noche) ");
     string turno =  server->NewRecibir();
     //string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
-    Servicio ser(origen,destino,fecha,turno);
+    Servicio *ser = new Servicio(origen,destino,fecha,turno);
     //verifica que el viaje no exista, si no existe, guarda uno nuevo
     int numeroServicio = guardarServicio(ser);
     if(numeroServicio==0){
         system("cls");
         server->enviar("Viaje ya existe");
     }else{
-        generarAsientos(numeroServicio,server);
+        generarAsientos(numeroServicio,server,ser);
     }
 }
 
@@ -415,7 +425,7 @@ void generarViajes(Servidor *server){
    return encontrado;
 }*/
 
-int guardarServicio(Servicio ser){
+int guardarServicio(Servicio *ser){
    int encontrado  = 0;
    fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::trunc);
    if(!file.is_open()){
@@ -436,8 +446,18 @@ int guardarServicio(Servicio ser){
 }
 
 
-void generarAsientos(int numeroServicio,Servidor *server){
-    cout<<"Llegue hasta aca"<<endl;
+void generarAsientos(int numeroServicio,Servidor *server,Servicio *ser){
+
+    int filas = (sizeof(ser->bus)/sizeof(ser->bus[0]));
+    int columnas = (sizeof(ser->bus[0])/sizeof(ser->bus[0][0]));
+    for(int i = 0; i < filas; i++){
+        for(int j = 0; j < columnas; j++){
+            cout<<ser->bus[i][j];
+        }
+        cout<<"\n";
+    }
+
+    server->enviar("Acientos generados");
 }
 
 
