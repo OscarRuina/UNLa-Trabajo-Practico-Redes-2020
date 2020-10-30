@@ -149,6 +149,7 @@ public:
 
     }
 
+
     void cerrarConexion(){
         // Cerramos el socket de la conexion
         closesocket(conexion_socket);
@@ -173,7 +174,7 @@ public:
 
 class Servicio{
 public:
-    //int id;
+
     string origen;
     string destino;
     string fecha;
@@ -189,6 +190,40 @@ public:
                         };
 
 
+    string getOrigen(){
+        return this->origen;
+    }
+
+    void setOrigen(string origen){
+        this->origen=origen;
+    }
+
+    string getDestino(){
+        return this->destino;
+    }
+
+    void setDestino(string destino){
+        this->destino=destino;
+    }
+    string getFecha(){
+        return this->fecha;
+    }
+
+    void setFecha(string fecha){
+        this->fecha=fecha;
+    }
+
+    string getTurno(){
+        return this->turno;
+    }
+
+    void setTurno(string turno){
+        this->turno=turno;
+    }
+
+    Servicio(){
+    }
+
 
     Servicio(string origen,string destino,string fecha,string turno){
         this->origen = origen;
@@ -197,6 +232,11 @@ public:
         this->turno = turno;
     }
 
+   /* int compareTo(Servicio otro){
+        return (strcmp(this->origen,otro->getOrigen())&&strcmp(this->destino,otro->getDestino())&&
+            strcmp(this->fecha,otro->getFecha())&&strcmp(this->turno,otro->getTurno()));
+    }
+*/
     void mostrar(){
         cout<<"Origen: " << origen << "\nDestino: " << destino << "\nFecha: " << fecha << "\nTurno: " << turno<<endl;
     }
@@ -215,14 +255,16 @@ public:
 
 };
 
-
+void inicioSesion(string sesion);
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
 void generarViajes(Servidor *server);
 //int guardarServicio(string viaje);
-int guardarServicio(Servicio *ser);
+int guardarServicio(char servicio[40]);
 void verRegistroActividades(Servidor *server,std::string usuario);
-
+int verificarServicio(char servicio[40]);
+void escribirArchivo(char servicio[40]);
 void CerrarSesion(Servidor *server,std::string usuario);
+int leerArchivoServicios(char serv[40]);
 
 void generarAsientos(int numeroServicio,Servidor *server,Servicio *ser);
 
@@ -237,8 +279,7 @@ int main(int argc, char *argv[]){
         int encontrado = 0;
         string usuario;//la declare aca para mandarla por parametro para el menu, opcion 3
 
-        t0 = clock();
-        t1 = clock();
+
 
         while (encontrado == 0){
             server->enviar("Ingrese Usuario");
@@ -249,13 +290,10 @@ int main(int argc, char *argv[]){
             string UsuPass = usuario + ';' + Pass + ';' ;
 
             if ( leerArchivoUsuarios(UsuPass) == 0 ){  //No lo encontro, intento++
-                Intentos = Intentos + 1;               //encontrado seguira en 0 para repetirse
+                Intentos++;               //encontrado seguira en 0 para repetirse
             }else{
                 encontrado = 1;
-                log(usuario,"==================");
-                log(usuario,"INICIO SESION");
-                log(usuario,"==================");
-
+                inicioSesion(usuario);
             }
 
             if (Intentos == 3 ){
@@ -294,7 +332,11 @@ string menu(){
     return menu;
 }
 
-
+void inicioSesion(string usuario){
+    log(usuario,"==================");
+    log(usuario,"INICIO SESION");
+    log(usuario,"==================");
+}
 //Funcion Log
 void log(string archivo, string msg){
         // Declaramos las variables
@@ -358,6 +400,25 @@ int leerArchivoUsuarios(string RecvBuff){
    return encontrado;
 }
 
+void verRegistroActividades(Servidor *server,std::string usuario){
+    log(usuario,"Pulso la Opcion 3");
+    //leo el archivo usuario entrante
+    ifstream archivo;
+    string linea;
+    string mensaje;
+    string nombre = usuario + ".log";
+    archivo.open(nombre.c_str(),ios::in);//
+    if(archivo.fail()){
+        cout<<"No se pudo abrir el archivo del usuario: "<<usuario<<endl;
+        log("server","No se pudo abrir el archivo del usuario " + usuario);
+    }
+    while(getline(archivo,linea)){
+        mensaje = mensaje + "\n" + linea ;
+    }
+    archivo.close();
+    server->enviar(mensaje);
+}
+
 void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
@@ -367,13 +428,11 @@ void generarOpciones(std::string opt,Servidor *server,std::string usuario){
         generarViajes(server);
         break;
         case '2':
-
             break;
         case '3':
             verRegistroActividades(server,usuario);
             break;
         case '4':
-
             CerrarSesion(server,usuario);
             break;
         default:
@@ -399,94 +458,78 @@ void generarViajes(Servidor *server){
 
     server->enviar("Ingrese Turno: TM(Turno Mañana) - TT(Turno Tarde) - TN(Turno Noche) ");
     string turno =  server->NewRecibir();
-    //string servicio = origen+";"+destino+";"+fecha+";"+turno+";";
-    Servicio *ser = new Servicio(origen,destino,fecha,turno);
-    //verifica que el viaje no exista, si no existe, guarda uno nuevo
-    int numeroServicio = guardarServicio(ser);
-    if(numeroServicio==0){
-        system("cls");
-        server->enviar("Viaje ya existe");
-    }else{
-        generarAsientos(numeroServicio,server,ser);
-    }
+
+    string serv = origen+destino+fecha+turno;
+    char servicio[40];
+
+    strcpy(servicio,serv.c_str());
+
+    int estado = verificarServicio(servicio);
+
 }
 
-/*int guardarServicio(string servicio){
-   fstream servicios;
-   string linea;
-   int encontrado  = -1;
-   int numeroServicio = 0;
-   servicios.open("servicios.txt",ios::out | ios::in ); // abro el archivo en modo lectura
-   if(servicios.fail()){
-    cout<<"No se pudo abrir el archivo"<<endl;
-    log("server","No se pudo abrir el archivo servicios");
-   }
-//verifica que no exista el servicio
-   while(getline(servicios,linea)){
-        if(linea.find(servicio) != string::npos){
-            encontrado = 0;
+int verificarServicio(char serv[40]){
+    int encontrado = 0;
+
+    encontrado = leerArchivoServicios(serv);
+    if(encontrado == 0){
+        escribirArchivo(serv);
+    }
+    return 0;
+}
+
+int leerArchivoServicios(char serv[40]){
+
+
+    int encontrado = 0;
+    int tam = 0;
+    //variable auxiliar para leer archivo
+    char aux[sizeof(serv)];
+
+    ifstream servicios("servicios.bin", ios::in |ios::binary);
+    if(!servicios.is_open()){
+        cout<<"No se pudo abrir el archivo"<<endl;
+        log("server","No se pudo abrir el archivo servicios");
+    }else{
+
+    //verifico el tamaño del archivo
+    servicios.seekg(0,ios::end);
+    tam = servicios.tellg();
+    //me muevo al principio del archibo
+    servicios.seekg(0,ios::beg);
+
+    //loopeo mientras no este en el final y no lo haya encontrado
+    while(servicios.tellg()<tam&&!encontrado)
+    {
+        size_t len = 0;
+        servicios.read((char*)&len, sizeof(len));
+        servicios.read(aux, len);
+        //saco la ultima posicion para borrar basura
+        aux[len] = '\0';
+        //comparo para verificar que sean iguales
+        if(strcmp(serv,aux)==0){
+            cout<<"encontrado"<<endl;
+            encontrado = 1;
         }
-        numeroServicio++;
-   }
-   if(encontrado != 0){
-    //escribir servicio
-    string fullService = numeroServicio+";"+servicio+"\n";
-    servicios << fullService<< endl;
+    }
+    servicios.close();
+    }
+    return encontrado;
+}
+
+
+void escribirArchivo(char servicio[40]){
+
+
+    ofstream servicios("servicios.bin", ios::out |ios::binary |ios::app);
+    size_t len = strlen(servicio);
+
+    servicios.write((char*)&len, sizeof(len));
+    servicios.write(servicio, len);
 
     servicios.close();
-    return numeroServicio;
-   }
-   servicios.close();
-   return encontrado;
-}*/
-
-int guardarServicio(Servicio *ser){
-   int encontrado  = 0;
-   fstream file("servicios.bin",ios::binary | ios:: in | ios::out | ios::app);
-   if(!file.is_open()){
-    cout<<"No se pudo abrir el archivo"<<endl;
-    log("server","No se pudo abrir el archivo servicios");
-   }else{
-      //string linea;
-      //int numeroServicio = 0;
-      //leo el archivo en busca de un objeto igual
-      //file.read((char*)&ser,sizeof(Servicio));
-
-
-
-      file.write((char*)&ser , sizeof(Servicio));
-      file.close();
-      encontrado = 1;
-      }
-      return encontrado;
 
 }
 
 
-void generarAsientos(int numeroServicio,Servidor *server,Servicio *ser){
 
-    ser->mostrar();
-    ser->matriz();
-
-    server->enviar("Acientos generados");
-}
-
-
-void verRegistroActividades(Servidor *server,std::string usuario){
-    log(usuario,"Pulso la Opcion 3");
-    //leo el archivo usuario entrante
-    ifstream archivo;
-    string linea;
-    string mensaje;
-    string nombre = usuario + ".log";
-    archivo.open(nombre.c_str(),ios::in);//
-    if(archivo.fail()){
-        cout<<"No se pudo abrir el archivo del usuario: "<<usuario<<endl;
-        log("server","No se pudo abrir el archivo del usuario " + usuario);
-    }
-    while(getline(archivo,linea)){
-        mensaje = mensaje + "\n" + linea ;
-    }
-    archivo.close();
-    server->enviar(mensaje);
-    }
