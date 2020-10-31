@@ -114,19 +114,27 @@ public:
     }
 
     std::string NewRecibir(){
-        recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
-        t1 = clock();
-        times = (double(t1-t0)/CLOCKS_PER_SEC);
-        cout << "Tiempo de respuesta del cliente: " << times << endl;
+        int receiveCode = recv(comunicacion_socket, RecvBuff, sizeof(RecvBuff),0);
+        //recv (comunicacion_socket, RecvBuff, sizeof(RecvBuff), 0);
+        if (receiveCode == SOCKET_ERROR || receiveCode == 0){
+            Reiniciar();
+            RecvBuff[0] = 'x';
+        }else{
 
-        t0 = clock();
-        t1 = clock();
-        //cout<<"El cliente dice: "<<RecvBuff<<endl;
-        log("server",RecvBuff);
-        //------------------------------------
+            //cout<<"El cliente dice: "<<RecvBuff<<endl;
+
+            t1 = clock();
+            times = (double(t1-t0)/CLOCKS_PER_SEC);
+            cout << "Tiempo de respuesta del cliente: " << times << endl;
+
+            t0 = clock();
+            t1 = clock();
+            //cout<<"El cliente dice: "<<RecvBuff<<endl;
+            log("server",RecvBuff);
+            //------------------------------------
+        }
         return std::string(RecvBuff);
     }
-
     //metodo comun para enviar mensajes
     void enviar(){
         cin>>this->SendBuff;
@@ -137,7 +145,7 @@ public:
     }
 
     void enviar(string msg){
-        if ( times < 10 ) {             //tiempo en segundos
+        if ( times < 120 ) {             //tiempo en segundos
             strcpy(SendBuff, msg.c_str());
         }else{
            strcpy(SendBuff, "x - Tiempo de inactividad superado, se cerrara la conexion");
@@ -277,15 +285,30 @@ int main(int argc, char *argv[]){
         Intentos = 0;
         server->recibir();
         int encontrado = 0;
-        string usuario;//la declare aca para mandarla por parametro para el menu, opcion 3
-
-
-
+        string usuario; //la declare aca para mandarla por parametro para el menu, opcion 3
+        string Pass;
+        string Respuesta;
+        Respuesta = "";
         while (encontrado == 0){
             server->enviar("Ingrese Usuario");
-            usuario = server->NewRecibir();
+            Respuesta = server->NewRecibir();
+            usuario = Respuesta;
+
+            if ( Respuesta != "x") {
+                usuario = Respuesta;
+            }else{
+                break;
+            }
+
             server->enviar("Ingrese Contrasenia");
-            string Pass = server->NewRecibir();
+            Respuesta = server->NewRecibir();
+            Pass = Respuesta;
+
+            if ( Respuesta != "x") {
+                Pass = Respuesta;
+            }else{
+                break;
+            }
 
             string UsuPass = usuario + ';' + Pass + ';' ;
 
@@ -314,7 +337,7 @@ int main(int argc, char *argv[]){
 
         //envio menu de opciones
         server->enviar(menu());
-        while (encontrado == 1){
+        while (encontrado == 1 && Respuesta != "x"){
             //recibo respuesta y entro a las subopciones
             string opt = server->NewRecibir();
             generarOpciones(opt,server,usuario);
@@ -572,7 +595,7 @@ void escribirAsientos(char servicio[40]){
     ofstream file;
     int idServicio = arrayServicios.size();
 
-    file.open(to_string(idServicio),std::ofstream::out);
+    //file.open(to_string(idServicio),std::ofstream::out);
     //escribo en el archivo fila / col / estado / ocupante
     for(int i = 0 ; i < 3; i++){
         for(int j = 0;j<20;j++){
