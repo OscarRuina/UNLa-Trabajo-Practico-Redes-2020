@@ -6,6 +6,7 @@
 #include <fstream>
 #include <ctime>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -261,12 +262,11 @@ void generarViajes(Servidor *server);
 //int guardarServicio(string viaje);
 int guardarServicio(char servicio[40]);
 void verRegistroActividades(Servidor *server,std::string usuario);
-int verificarServicio(char servicio[40]);
-void escribirArchivo(char servicio[40]);
 void CerrarSesion(Servidor *server,std::string usuario);
+int verificarServicio(char servicio[40]);
+void escribirArchivoServicio(char servicio[40]);
 int leerArchivoServicios(char serv[40]);
-
-void generarAsientos(int numeroServicio,Servidor *server,Servicio *ser);
+void escribirAsientos(char servicio[40]);
 
 
 int main(int argc, char *argv[]){
@@ -470,16 +470,14 @@ void generarViajes(Servidor *server){
 
 int verificarServicio(char serv[40]){
     int encontrado = 0;
-
     encontrado = leerArchivoServicios(serv);
     if(encontrado == 0){
-        escribirArchivo(serv);
+        escribirArchivoServicio(serv);
     }
     return 0;
 }
 
 int leerArchivoServicios(char serv[40]){
-
 
     int encontrado = 0;
     int tam = 0;
@@ -518,7 +516,7 @@ int leerArchivoServicios(char serv[40]){
 }
 
 
-void escribirArchivo(char servicio[40]){
+void escribirArchivoServicio(char servicio[40]){
 
 
     ofstream servicios("servicios.bin", ios::out |ios::binary |ios::app);
@@ -528,8 +526,60 @@ void escribirArchivo(char servicio[40]){
     servicios.write(servicio, len);
 
     servicios.close();
-
+    escribirAsientos(servicio);
 }
 
 
 
+std::vector <std::string> traerServicios(char servicio[40]){
+    int tam = 0;
+    //variable auxiliar para leer archivo
+    char aux[sizeof(servicio)];
+    std::vector<std::string> arrayServicios;
+
+    ifstream servicios("servicios.bin", ios::in |ios::binary);
+    if(!servicios.is_open()){
+        cout<<"No se pudo abrir el archivo"<<endl;
+        log("server","No se pudo abrir el archivo servicios");
+    }else{
+    //verifico el tamaño del archivo
+    servicios.seekg(0,ios::end);
+    tam = servicios.tellg();
+    //me muevo al principio del archibo
+    servicios.seekg(0,ios::beg);
+
+    //loopeo mientras no este en el final y no lo haya encontrado
+    while(servicios.tellg()<tam)
+    {
+        size_t len = 0;
+        servicios.read((char*)&len, sizeof(len));
+        servicios.read(aux, len);
+        //saco la ultima posicion para borrar basura
+        aux[len] = '\0';
+        //agrego los elementos al vector
+        arrayServicios.push_back(aux);
+
+
+    }
+    servicios.close();
+    }
+    return arrayServicios;
+}
+
+void escribirAsientos(char servicio[40]){
+    //el id es el tamaño del vector +1
+    std::vector<std::string> arrayServicios = traerServicios(servicio);
+    ofstream file;
+    int idServicio = arrayServicios.size();
+
+    file.open(to_string(idServicio),std::ofstream::out);
+    //escribo en el archivo fila / col / estado / ocupante
+    for(int i = 0 ; i < 3; i++){
+        for(int j = 0;j<20;j++){
+            file << i+1 <<";"<< j+1 << ";" << "0"<< ";"<< ";"<<"\n"<< endl;
+       cout<<i<<endl;
+        }
+    }
+    file.close();
+
+}
