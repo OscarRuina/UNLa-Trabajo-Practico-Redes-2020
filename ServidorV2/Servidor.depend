@@ -50,7 +50,7 @@
 	<sstream>
 	<vector>
 
-1603994631 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
+1604153338 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
@@ -59,4 +59,5 @@
 	<fstream>
 	<ctime>
 	<sstream>
+	<vector>
 

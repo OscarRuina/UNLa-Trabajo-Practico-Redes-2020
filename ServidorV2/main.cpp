@@ -67,7 +67,7 @@ public:
        memset(&servidor, 0, sizeof(servidor)) ;
        memcpy(&servidor.sin_addr, hp->h_addr, hp->h_length);
        servidor.sin_family = hp->h_addrtype;
-       servidor.sin_port = htons(6000);
+       servidor.sin_port = htons(5000);
 
        // Asociamos ip y puerto al socket
        resp=bind(conexion_socket, (struct sockaddr *)&servidor, sizeof(servidor));

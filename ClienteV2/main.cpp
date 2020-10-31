@@ -28,7 +28,7 @@ public:
     int resp;
     char SendBuff[102400],RecvBuff[102400],user[1024],password[1024];
 
-    Cliente(){
+    Cliente(int puerto){
         countLog = 1;
         RespLogin = 0;
        //Inicializamos la libreria winsock2
@@ -62,7 +62,7 @@ public:
        memset(&servidor, 0, sizeof(servidor)) ;
        memcpy(&servidor.sin_addr, hp->h_addr, hp->h_length);
        servidor.sin_family = hp->h_addrtype;
-       servidor.sin_port = htons(6000);
+       servidor.sin_port = htons(puerto);
 
        // Nos conectamos con el servidor...
        if(connect(conexion_socket,(struct sockaddr *)&servidor,sizeof(servidor))==SOCKET_ERROR){
@@ -70,6 +70,8 @@ public:
           closesocket(conexion_socket);
           WSACleanup();
           getchar();
+          system("PAUSE");
+          exit(0);
 
        }
        cout<<"Conexion establecida con: "<<inet_ntoa(servidor.sin_addr)<<endl;
@@ -123,7 +125,11 @@ public:
 
 int main(int argc, char *argv[])
 {
-    Cliente *cliente = new Cliente();
+    int puerto = 0;
+    cout<<"Ingrese Puerto:"<<endl;
+    cin>>puerto;
+    Cliente *cliente = new Cliente(puerto);
+
     cliente->enviarInicio("InicioSeccion");
 
 
