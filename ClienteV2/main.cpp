@@ -99,6 +99,7 @@ public:
            system("PAUSE");
            exit(0);
         }
+
         if (RecvBuff[0] == 'B'){
             system("cls");
             string menu = string(RecvBuff);
@@ -127,6 +128,7 @@ int main(int argc, char *argv[])
 
 
     while(true){
+        system("cls");
         cliente->recibir();
         cliente->enviar();
     }

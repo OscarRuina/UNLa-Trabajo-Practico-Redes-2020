@@ -188,15 +188,6 @@ public:
     string destino;
     string fecha;
     string turno;
-    string bus[7][43] = {
-                           {" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","1"," ","2"} ,
-                           {" "," ","|"," ","1"," ","2"," ","3"," ","4"," ","5"," ","6"," ","7"," ","8"," ","9"," ","0"," ","1"," ","2"," ","3"," ","4"," ","5"," ","6"," ","7"," ","8"," ","9"," ","0"} ,
-                           {"-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"} ,
-                           {"A"," ","|"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"} ,
-                           {"B"," ","|"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"} ,
-                           {" "," ","|","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","-"} ,
-                           {"C"," ","|"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"," ","O"}
-                        };
 
 
     string getOrigen(){
@@ -241,26 +232,9 @@ public:
         this->turno = turno;
     }
 
-   /* int compareTo(Servicio otro){
-        return (strcmp(this->origen,otro->getOrigen())&&strcmp(this->destino,otro->getDestino())&&
-            strcmp(this->fecha,otro->getFecha())&&strcmp(this->turno,otro->getTurno()));
-    }
-*/
     void mostrar(){
         cout<<"Origen: " << origen << "\nDestino: " << destino << "\nFecha: " << fecha << "\nTurno: " << turno<<endl;
     }
-
-    void matriz(){
-      int filas = (sizeof(bus)/sizeof(bus[0]));
-      int columnas = (sizeof(bus[0])/sizeof(bus[0][0]));
-      for(int i = 0; i < filas; i++){
-        for(int j = 0; j < columnas; j++){
-            cout<<bus[i][j];
-        }
-        cout<<"\n";
-      }
-    }
-
 
 };
 
@@ -328,16 +302,9 @@ int main(int argc, char *argv[]){
         }
 
 
-
-
-        /*while (encontrado == 1){
-            server->recibir();
-            server->enviar();
-        }*/
-
         //envio menu de opciones
-        server->enviar(menu());
         while (encontrado == 1 && Respuesta != "x"){
+            server->enviar(menu());
             //recibo respuesta y entro a las subopciones
             string opt = server->NewRecibir();
             generarOpciones(opt,server,usuario);
@@ -445,11 +412,8 @@ void verRegistroActividades(Servidor *server,std::string usuario){
 void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     switch(opt[0]){
         case '1':
-
-            //generarViajes(server);
-
-        generarViajes(server);
-        break;
+            generarViajes(server);
+            break;
         case '2':
             break;
         case '3':
@@ -487,7 +451,12 @@ void generarViajes(Servidor *server){
 
     strcpy(servicio,serv.c_str());
 
-    int estado = verificarServicio(servicio);
+    //envia mensaje segun si escribio o no
+    string msg;
+
+    system("cls");
+            //server->enviar(msg);
+
 
 }
 
@@ -497,7 +466,7 @@ int verificarServicio(char serv[40]){
     if(encontrado == 0){
         escribirArchivoServicio(serv);
     }
-    return 0;
+    return encontrado;
 }
 
 int leerArchivoServicios(char serv[40]){
@@ -581,8 +550,6 @@ std::vector <std::string> traerServicios(char servicio[40]){
         aux[len] = '\0';
         //agrego los elementos al vector
         arrayServicios.push_back(aux);
-
-
     }
     servicios.close();
     }
@@ -595,14 +562,12 @@ void escribirAsientos(char servicio[40]){
     ofstream file;
     int idServicio = arrayServicios.size();
 
-    //file.open(to_string(idServicio),std::ofstream::out);
+    file.open(to_string(idServicio),std::ofstream::out);
     //escribo en el archivo fila / col / estado / ocupante
     for(int i = 0 ; i < 3; i++){
         for(int j = 0;j<20;j++){
             file << i+1 <<";"<< j+1 << ";" << "0"<< ";"<< ";"<<"\n"<< endl;
-       cout<<i<<endl;
         }
     }
     file.close();
-
 }
