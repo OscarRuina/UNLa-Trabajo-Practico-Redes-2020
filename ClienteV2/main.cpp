@@ -13,7 +13,7 @@ using namespace std;
 int countLog;
 int RespLogin;
 string UsuarioLogin;
-
+string OK;
 
 void menu();
 void log(string msg);
@@ -108,6 +108,11 @@ public:
             cout << str_replace(";", "\n", menu) << endl;
         }
 
+        if (RecvBuff[0] == 'k'){
+            system("cls");
+            OK = string(RecvBuff);
+
+        }
         memset(RecvBuff, 0, sizeof(RecvBuff));
     } //ejemplo
 
@@ -122,24 +127,40 @@ public:
 
 };
 
+void menu();
 
 int main(int argc, char *argv[])
 {
+    OK = "";
     int puerto = 0;
-    cout<<"Ingrese Puerto:"<<endl;
+    cout<<"Ingrese Puerto 5000:"<<endl;
     cin>>puerto;
     Cliente *cliente = new Cliente(puerto);
 
-    cliente->enviarInicio("InicioSeccion");
-
+    cliente->enviarInicio("InicioSesion");
 
     while(true){
-        system("cls");
+        cliente->recibir();
+        if (OK == "k"){         //ingreso bien el usuario
+            break;
+        }
+        cliente->enviar();
+    }
+
+     while(OK == "k"){
         cliente->recibir();
         cliente->enviar();
     }
 
     return 0;
+}
+
+void menu(){
+    cout<<"BIENVENIDO AL SISTEMA"<<endl;
+    cout<<"1- Alta Servicio"<<endl;
+    cout<<"2- Gestionar Pasajes"<<endl;
+    cout<<"3- Ver Registro de Actividades"<<endl;
+    cout<<"4- Cerrar Sesion"<<endl;
 }
 
 string& str_replace(const string &search, const string &replace, string &subject)

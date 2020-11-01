@@ -29,7 +29,7 @@
 	<ctime>
 	<sstream>
 
-1603765001 source:c:\users\thesi\documents\bitbucket\redes2020\servidorv2\main.cpp
+1604242071 source:c:\users\thesi\documents\bitbucket\redes2020\servidorv2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
@@ -38,6 +38,7 @@
 	<fstream>
 	<ctime>
 	<sstream>
+	<vector>
 
 1604112614 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
 	<iostream>

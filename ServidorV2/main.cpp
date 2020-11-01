@@ -120,9 +120,6 @@ public:
             Reiniciar();
             RecvBuff[0] = 'x';
         }else{
-
-            //cout<<"El cliente dice: "<<RecvBuff<<endl;
-
             t1 = clock();
             times = (double(t1-t0)/CLOCKS_PER_SEC);
             cout << "Tiempo de respuesta del cliente: " << times << endl;
@@ -130,7 +127,8 @@ public:
             t0 = clock();
             t1 = clock();
             //cout<<"El cliente dice: "<<RecvBuff<<endl;
-            log("server",RecvBuff);
+            string msglog = " El usuario ingreso: " + string(RecvBuff);
+            log("server",msglog);
             //------------------------------------
         }
         return std::string(RecvBuff);
@@ -145,12 +143,12 @@ public:
     }
 
     void enviar(string msg){
-        if ( times < 120 ) {             //tiempo en segundos
+        if ( times < 180 ) {             //tiempo en segundos
             strcpy(SendBuff, msg.c_str());
         }else{
            strcpy(SendBuff, "x - Tiempo de inactividad superado, se cerrara la conexion");
         }
-        //cout<<"Envia un mensaje"<<endl;;
+        //cout<<"Envia un mensaje: "<< msg << endl;;
         //log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
@@ -255,6 +253,9 @@ int main(int argc, char *argv[]){
     while (true){
         //system("cls");
         Servidor *server = new Servidor();
+        t0 = clock();
+        t1 = clock();
+        times = 0;
 
         Intentos = 0;
         server->recibir();
@@ -267,7 +268,6 @@ int main(int argc, char *argv[]){
             server->enviar("Ingrese Usuario");
             Respuesta = server->NewRecibir();
             usuario = Respuesta;
-
             if ( Respuesta != "x") {
                 usuario = Respuesta;
             }else{
@@ -277,7 +277,6 @@ int main(int argc, char *argv[]){
             server->enviar("Ingrese Contrasenia");
             Respuesta = server->NewRecibir();
             Pass = Respuesta;
-
             if ( Respuesta != "x") {
                 Pass = Respuesta;
             }else{
@@ -291,6 +290,7 @@ int main(int argc, char *argv[]){
             }else{
                 encontrado = 1;
                 inicioSesion(usuario);
+                server->enviar("k");
             }
 
             if (Intentos == 3 ){
@@ -303,12 +303,13 @@ int main(int argc, char *argv[]){
 
 
         //envio menu de opciones
+
         while (encontrado == 1 && Respuesta != "x"){
             server->enviar(menu());
             //recibo respuesta y entro a las subopciones
             string opt = server->NewRecibir();
             generarOpciones(opt,server,usuario);
-            if ( opt == "4" ){
+            if ( opt == "4" || opt == "x"){
                 break;
             }
         }
@@ -317,6 +318,7 @@ int main(int argc, char *argv[]){
 }
 
 //funciones del main
+
 string menu(){
     string menu = "BIENVENIDO AL SISTEMA;1- Alta Servicio;2- Gestionar Pasajes;3- Ver Registro de Actividades;4- Cerrar Sesion";
     return menu;
@@ -326,6 +328,7 @@ void inicioSesion(string usuario){
     log(usuario,"==================");
     log(usuario,"INICIO SESION");
     log(usuario,"==================");
+    log("server","Inicio Sesion el usuario: " + usuario);
 }
 //Funcion Log
 void log(string archivo, string msg){
@@ -457,7 +460,17 @@ void generarViajes(Servidor *server){
     system("cls");
             //server->enviar(msg);
 
+    int estado ;
+    string msgSer;
+    estado = verificarServicio(servicio);
+    if(estado = 0){
+        msgSer = "Servicio creado";
+    }else{
+        msgSer= "Servicio ya existe";
+    }
 
+    //system("cls");
+    server->enviar(msg);
 }
 
 int verificarServicio(char serv[40]){
@@ -506,7 +519,6 @@ int leerArchivoServicios(char serv[40]){
     }
     return encontrado;
 }
-
 
 void escribirArchivoServicio(char servicio[40]){
 
