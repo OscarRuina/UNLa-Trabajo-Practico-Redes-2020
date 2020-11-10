@@ -183,62 +183,6 @@ public:
     }
 };
 
-class Servicio{
-public:
-
-    string origen;
-    string destino;
-    string fecha;
-    string turno;
-
-
-    string getOrigen(){
-        return this->origen;
-    }
-
-    void setOrigen(string origen){
-        this->origen=origen;
-    }
-
-    string getDestino(){
-        return this->destino;
-    }
-
-    void setDestino(string destino){
-        this->destino=destino;
-    }
-    string getFecha(){
-        return this->fecha;
-    }
-
-    void setFecha(string fecha){
-        this->fecha=fecha;
-    }
-
-    string getTurno(){
-        return this->turno;
-    }
-
-    void setTurno(string turno){
-        this->turno=turno;
-    }
-
-    Servicio(){
-    }
-
-
-    Servicio(string origen,string destino,string fecha,string turno){
-        this->origen = origen;
-        this->destino = destino;
-        this->fecha = fecha;
-        this->turno = turno;
-    }
-
-    void mostrar(){
-        cout<<"Origen: " << origen << "\nDestino: " << destino << "\nFecha: " << fecha << "\nTurno: " << turno<<endl;
-    }
-
-};
 
 void inicioSesion(string sesion);
 void generarOpciones(std::string opt,Servidor *server,std::string usuario);
@@ -256,6 +200,7 @@ void buscarPorOrigen(Servidor *server, std::string usuario);
 std::vector <std::string> traerServicios();
 std::vector <std::string> generarVectorServicios(string target);
 void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario);
+string buscarAsientosServicios(string servicio);
 
 int main(int argc, char *argv[]){
     while (true){
@@ -504,7 +449,6 @@ void buscarPorOrigen(Servidor *server, std::string usuario){
 }
 
 void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario){
-    server->enviar("Ztestestestewststets");
     server->enviar(menuGestionarServicios());
     string opt = server->NewRecibir();
     //falta enviar los asientos
@@ -588,7 +532,6 @@ int leerArchivoServicios(char serv[40]){
 
 
 
-
 void escribirArchivoServicio(char servicio[40]){
 
     ofstream servicios("servicios.bin", ios::out |ios::binary |ios::app);
@@ -601,39 +544,6 @@ void escribirArchivoServicio(char servicio[40]){
     escribirAsientos(servicio);
 }
 
-
-std::vector <std::string> traerServicios(char servicio[40]){
-    int tam = 0;
-    //variable auxiliar para leer archivo
-    char aux[sizeof(servicio)];
-    std::vector<std::string> arrayServicios;
-
-    ifstream servicios("servicios.bin", ios::in |ios::binary);
-    if(!servicios.is_open()){
-        cout<<"No se pudo abrir el archivo"<<endl;
-        log("server","No se pudo abrir el archivo servicios");
-    }else{
-    //verifico el tamaño del archivo
-    servicios.seekg(0,ios::end);
-    tam = servicios.tellg();
-    //me muevo al principio del archibo
-    servicios.seekg(0,ios::beg);
-
-    //loopeo mientras no este en el final y no lo haya encontrado
-    while(servicios.tellg()<tam)
-    {
-        size_t len = 0;
-        servicios.read((char*)&len, sizeof(len));
-        servicios.read(aux, len);
-        //saco la ultima posicion para borrar basura
-        aux[len] = '\0';
-        //agrego los elementos al vector
-        arrayServicios.push_back(aux);
-    }
-    servicios.close();
-    }
-    return arrayServicios;
-}
 
 std::vector <std::string> traerServicios(){
     char servicio[40];
@@ -669,18 +579,26 @@ std::vector <std::string> traerServicios(){
     return arrayServicios;
 }
 
+
+//escribo el archivo de asientos como el nombre del servicio, contiene el estado del asiento y el ocupante
 void escribirAsientos(char servicio[40]){
     ofstream file;
     string serv(servicio);
     file.open(serv,std::ofstream::out);
     cout<<serv<<endl;
-    //escribo en el archivo fila / col / estado / ocupante
+    //escribo en el archivo estado / ocupante
     for(int i = 0 ; i < 3; i++){
         for(int j = 0;j<20;j++){
-            file << i+1 <<";"<< j+1 << ";" << "0"<< ";"<< ";"<<"\n"<< endl;
+                //guarda el estado y quien lo ocupa
+            file << "0"<< ";"<< ";"<<"\n"<< endl;
         }
     }
     file.close();
+}
+
+string buscarAsientosServicios(string servicio){
+
+
 }
 
  std::vector <std::string> generarVectorServicios(string target){

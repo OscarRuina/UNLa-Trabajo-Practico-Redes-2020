@@ -19,7 +19,7 @@ string UsuarioLogin;
 void menu();
 void log(string msg);
 string& str_replace(const string &search, const string &replace, string &subject);
-string verificarRecibir();
+int verificarRecibir(string msg);
 
 class Cliente{
 public:
@@ -100,40 +100,13 @@ public:
     }
 
     //metodo comun para recibir mensajes
-    void recibir(){
+    string recibir(){
+        string msg;
         recv(conexion_socket, RecvBuff, sizeof(RecvBuff), 0);
-        cout << "El servidor dice: " << RecvBuff << endl;
-        if (RecvBuff[0] == 'x'){
-           system("PAUSE");
-           exit(0);
-        }
-
-        if (RecvBuff[0] == 'B'){
-            system("cls");
-            string menu = string(RecvBuff);
-            cout << str_replace(";", "\n", menu) << endl;
-        }
-        if (RecvBuff[0] == 'C'){
-            system("cls");
-            string menu = string(RecvBuff);
-            cout << str_replace(";", "\n", menu) << endl;
-        }
-        if (RecvBuff[0] == 'D'){
-            string opt;
-            system("cls");
-            string menu = string(RecvBuff);
-            menu.erase(0,1);
-            cout << str_replace(";", "\n", menu) << endl;
-        }
-        if(RecvBuff[0] =='Z'){
-            string menu = string(RecvBuff);
-            menu.erase(0,1);
-            cout<<menu<<endl;
-        }
-
-
+        msg = RecvBuff;
         memset(RecvBuff, 0, sizeof(RecvBuff));
-    } //ejemplo
+        return msg;
+    }
 
 
     void cerrar(){
@@ -149,57 +122,47 @@ public:
 };
 
 
-
-string verificarRecibir(){
-    string RecvBuff;
-if (RecvBuff[0] == 'x'){
+//verifica los estados del mensaje
+int verificarRecibir(string msg){
+    int responder = 1;
+    cout<<"el servidor dice:\n"<<endl;
+        if(msg[0]=='Z'){
+            responder = 0;
+            //borro el primer char
+            msg.erase(0,1);
+        }
+        if (msg[0] == 'x'){
            system("PAUSE");
            exit(0);
-        }
-
-        if (RecvBuff[0] == 'B'){
+        }else{
+        {
+            msg.erase(0,1);
             system("cls");
-            string menu = string(RecvBuff);
-            cout << str_replace(";", "\n", menu) << endl;
+            string menu = string(msg);
+            cout << str_replace(";", "\n", msg) << endl;
         }
-        if (RecvBuff[0] == 'C'){
-            system("cls");
-            string menu = string(RecvBuff);
-            cout << str_replace(";", "\n", menu) << endl;
-        }
-        if (RecvBuff[0] == 'D'){
-            string opt;
-            system("cls");
-            string menu = string(RecvBuff);
-            menu.erase(0,1);
-            cout << str_replace(";", "\n", menu) << endl;
-        }
-        if(RecvBuff[0] =='Z'){
-            string menu = string(RecvBuff);
-            menu.erase(0,1);
-            cout<<menu<<endl;
-        }
-
-
-    return RecvBuff;
+    }
+    return responder;
 }
 
 int main(int argc, char *argv[])
 {
     Cliente *cliente = new Cliente();
     cliente->enviarInicio("InicioSeccion");
-
-
+    int responder = 1;
     while(true){
         //string str = cliente->recibir();
-        cliente->recibir();
-        //if(!strcmp(str,'Z')==0){
-        cliente->enviar();
-             //       }
-    }
-
+        string msg = cliente->recibir();
+        responder = verificarRecibir(msg);
+        if(responder!=0){
+            cliente->enviar();
+        }
+}
     return 0;
 }
+
+
+
 
 string& str_replace(const string &search, const string &replace, string &subject)
 {
