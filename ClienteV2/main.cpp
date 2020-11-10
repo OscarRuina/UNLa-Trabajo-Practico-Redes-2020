@@ -6,6 +6,7 @@
 #include <fstream>
 #include <ctime>
 #include <sstream>
+#include <vector>
 
 
 using namespace std;
@@ -13,7 +14,8 @@ using namespace std;
 int countLog;
 int RespLogin;
 string UsuarioLogin;
-string OK;
+std::vector <std::string> generarVectorServicios(string servicios);
+
 
 void menu();
 void log(string msg);
@@ -28,7 +30,7 @@ public:
     int resp;
     char SendBuff[102400],RecvBuff[102400],user[1024],password[1024];
 
-    Cliente(int puerto){
+    Cliente(){
         countLog = 1;
         RespLogin = 0;
        //Inicializamos la libreria winsock2
@@ -62,7 +64,7 @@ public:
        memset(&servidor, 0, sizeof(servidor)) ;
        memcpy(&servidor.sin_addr, hp->h_addr, hp->h_length);
        servidor.sin_family = hp->h_addrtype;
-       servidor.sin_port = htons(puerto);
+       servidor.sin_port = htons(6000);
 
        // Nos conectamos con el servidor...
        if(connect(conexion_socket,(struct sockaddr *)&servidor,sizeof(servidor))==SOCKET_ERROR){
@@ -70,8 +72,6 @@ public:
           closesocket(conexion_socket);
           WSACleanup();
           getchar();
-          system("PAUSE");
-          exit(0);
 
        }
        cout<<"Conexion establecida con: "<<inet_ntoa(servidor.sin_addr)<<endl;
@@ -103,15 +103,22 @@ public:
         }
 
         if (RecvBuff[0] == 'B'){
-            system("cls");
+                system("cls");
             string menu = string(RecvBuff);
             cout << str_replace(";", "\n", menu) << endl;
         }
+        if (RecvBuff[0] == 'C'){
+                                    system("cls");
 
-        if (RecvBuff[0] == 'k'){
+            string menu = string(RecvBuff);
+            cout << str_replace(";", "\n", menu) << endl;
+        }
+            if (RecvBuff[0] == 'D'){
             system("cls");
-            OK = string(RecvBuff);
-
+            string menu = string(RecvBuff);
+            menu.erase(0,1);
+            std::vector <std::string> servicios = generarVectorServicios(menu);
+            cout << str_replace(";", "\n", menu) << endl;
         }
         memset(RecvBuff, 0, sizeof(RecvBuff));
     } //ejemplo
@@ -125,42 +132,25 @@ public:
         system("PAUSE");
     }
 
+
+
 };
 
-void menu();
+
+
 
 int main(int argc, char *argv[])
 {
-    OK = "";
-    int puerto = 0;
-    cout<<"Ingrese Puerto 5000:"<<endl;
-    cin>>puerto;
-    Cliente *cliente = new Cliente(puerto);
+    Cliente *cliente = new Cliente();
+    cliente->enviarInicio("InicioSeccion");
 
-    cliente->enviarInicio("InicioSesion");
 
     while(true){
-        cliente->recibir();
-        if (OK == "k"){         //ingreso bien el usuario
-            break;
-        }
-        cliente->enviar();
-    }
-
-     while(OK == "k"){
         cliente->recibir();
         cliente->enviar();
     }
 
     return 0;
-}
-
-void menu(){
-    cout<<"BIENVENIDO AL SISTEMA"<<endl;
-    cout<<"1- Alta Servicio"<<endl;
-    cout<<"2- Gestionar Pasajes"<<endl;
-    cout<<"3- Ver Registro de Actividades"<<endl;
-    cout<<"4- Cerrar Sesion"<<endl;
 }
 
 string& str_replace(const string &search, const string &replace, string &subject)
@@ -190,3 +180,26 @@ string& str_replace(const string &search, const string &replace, string &subject
     subject = buffer;
     return subject;
 }
+
+
+ std::vector <std::string> generarVectorServicios(string target){
+    string delim = ";";
+    vector<string> v;
+    if (!target.empty()) {
+        string::size_type start = 0;
+        do {
+            size_t x = target.find(delim, start);
+            if (x == string::npos)
+                break;
+
+            v.push_back(target.substr(start, x-start));
+            start += delim.size();
+        }
+        while (true);
+
+        v.push_back(target.substr(start));
+    }
+    cout<<"pos 0"<<v.at(0)<<endl;
+    cout<<"pos 1"<<v.at(1)<<endl;
+    return v;
+    }

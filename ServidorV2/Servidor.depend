@@ -29,7 +29,17 @@
 	<ctime>
 	<sstream>
 
-1604242071 source:c:\users\thesi\documents\bitbucket\redes2020\servidorv2\main.cpp
+1603765001 source:c:\users\thesi\documents\bitbucket\redes2020\servidorv2\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+
+1604968701 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
@@ -40,7 +50,7 @@
 	<sstream>
 	<vector>
 
-1604112614 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
+1603994631 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
@@ -49,16 +59,4 @@
 	<fstream>
 	<ctime>
 	<sstream>
-	<vector>
-
-1604153338 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
-	<iostream>
-	<stdio.h>
-	<stdlib.h>
-	<winsock2.h>
-	<string>
-	<fstream>
-	<ctime>
-	<sstream>
-	<vector>
 

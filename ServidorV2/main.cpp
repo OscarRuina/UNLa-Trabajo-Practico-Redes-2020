@@ -19,6 +19,8 @@ double times;
 int leerArchivoUsuarios(string RecvBuff);
 void log(string archivo,string msg);
 string menu();
+string menuBusquedas();
+
 
 class Servidor{
 public:
@@ -67,7 +69,7 @@ public:
        memset(&servidor, 0, sizeof(servidor)) ;
        memcpy(&servidor.sin_addr, hp->h_addr, hp->h_length);
        servidor.sin_family = hp->h_addrtype;
-       servidor.sin_port = htons(5000);
+       servidor.sin_port = htons(6000);
 
        // Asociamos ip y puerto al socket
        resp=bind(conexion_socket, (struct sockaddr *)&servidor, sizeof(servidor));
@@ -120,6 +122,9 @@ public:
             Reiniciar();
             RecvBuff[0] = 'x';
         }else{
+
+            //cout<<"El cliente dice: "<<RecvBuff<<endl;
+
             t1 = clock();
             times = (double(t1-t0)/CLOCKS_PER_SEC);
             cout << "Tiempo de respuesta del cliente: " << times << endl;
@@ -127,8 +132,7 @@ public:
             t0 = clock();
             t1 = clock();
             //cout<<"El cliente dice: "<<RecvBuff<<endl;
-            string msglog = " El usuario ingreso: " + string(RecvBuff);
-            log("server",msglog);
+            log("server",RecvBuff);
             //------------------------------------
         }
         return std::string(RecvBuff);
@@ -143,12 +147,12 @@ public:
     }
 
     void enviar(string msg){
-        if ( times < 180 ) {             //tiempo en segundos
+        if ( times < 120 ) {             //tiempo en segundos
             strcpy(SendBuff, msg.c_str());
         }else{
            strcpy(SendBuff, "x - Tiempo de inactividad superado, se cerrara la conexion");
         }
-        //cout<<"Envia un mensaje: "<< msg << endl;;
+        //cout<<"Envia un mensaje"<<endl;;
         //log(SendBuff);
         send(comunicacion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
@@ -247,15 +251,15 @@ int verificarServicio(char servicio[40]);
 void escribirArchivoServicio(char servicio[40]);
 int leerArchivoServicios(char serv[40]);
 void escribirAsientos(char servicio[40]);
+void gestionarServicios(Servidor *server ,std::string usuario);
+void buscarPorOrigen(Servidor *server, std::string usuario);
+std::vector <std::string> traerServicios();
 
 
 int main(int argc, char *argv[]){
     while (true){
         //system("cls");
         Servidor *server = new Servidor();
-        t0 = clock();
-        t1 = clock();
-        times = 0;
 
         Intentos = 0;
         server->recibir();
@@ -268,6 +272,7 @@ int main(int argc, char *argv[]){
             server->enviar("Ingrese Usuario");
             Respuesta = server->NewRecibir();
             usuario = Respuesta;
+
             if ( Respuesta != "x") {
                 usuario = Respuesta;
             }else{
@@ -277,6 +282,7 @@ int main(int argc, char *argv[]){
             server->enviar("Ingrese Contrasenia");
             Respuesta = server->NewRecibir();
             Pass = Respuesta;
+
             if ( Respuesta != "x") {
                 Pass = Respuesta;
             }else{
@@ -290,7 +296,6 @@ int main(int argc, char *argv[]){
             }else{
                 encontrado = 1;
                 inicioSesion(usuario);
-                server->enviar("k");
             }
 
             if (Intentos == 3 ){
@@ -303,13 +308,12 @@ int main(int argc, char *argv[]){
 
 
         //envio menu de opciones
-
         while (encontrado == 1 && Respuesta != "x"){
             server->enviar(menu());
             //recibo respuesta y entro a las subopciones
             string opt = server->NewRecibir();
             generarOpciones(opt,server,usuario);
-            if ( opt == "4" || opt == "x"){
+            if ( opt == "4" ){
                 break;
             }
         }
@@ -318,17 +322,27 @@ int main(int argc, char *argv[]){
 }
 
 //funciones del main
-
 string menu(){
     string menu = "BIENVENIDO AL SISTEMA;1- Alta Servicio;2- Gestionar Pasajes;3- Ver Registro de Actividades;4- Cerrar Sesion";
     return menu;
 }
 
+
+void gestionarPasajes(Servidor *server , std::string usuario){
+menuBusquedas();
+
+}
+
+string menuBusquedas(){
+    string menu = "CBusqueda Servicios;1- Origen;2- Fecha;3- Turno;4- Origen y Fecha;5- Origen y Turno;6-Fecha y Turno;7- Origen ,Fecha y Turno";
+    return menu;
+}
+
+
 void inicioSesion(string usuario){
     log(usuario,"==================");
     log(usuario,"INICIO SESION");
     log(usuario,"==================");
-    log("server","Inicio Sesion el usuario: " + usuario);
 }
 //Funcion Log
 void log(string archivo, string msg){
@@ -418,6 +432,7 @@ void generarOpciones(std::string opt,Servidor *server,std::string usuario){
             generarViajes(server);
             break;
         case '2':
+            gestionarServicios(server,usuario);
             break;
         case '3':
             verRegistroActividades(server,usuario);
@@ -430,11 +445,53 @@ void generarOpciones(std::string opt,Servidor *server,std::string usuario){
     }
 }
 
-void CerrarSesion(Servidor *server,std::string usuario){
-    server->enviar("x - Cierra Sesion");
-    log (usuario, "Cierra Sesion");
-    server->Reiniciar();
+void gestionarServicios(Servidor *server, std::string usuario){
+    server->enviar(menuBusquedas());
+    string opt = server->NewRecibir();
+
+    switch(opt[0]){
+        case '1':
+            buscarPorOrigen(server,usuario);
+            break;
+        case '2':
+            break;
+        case '3':
+            break;
+        case '4':
+            break;
+        case '5':
+            break;
+        case '6':
+            break;
+        case '7':
+            break;
+          default:
+            break;
+    }
 }
+
+void buscarPorOrigen(Servidor *server, std::string usuario){
+    std::string request =  "D";
+    std::string aux;
+    std::vector <std::string> busqueda = traerServicios();
+    server->enviar("Escriba el Origen");
+    string msg = server->NewRecibir();
+
+    for (vector<std::string>::iterator serv=busqueda.begin(); serv!=busqueda.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg) != std::string::npos;
+        if(exists){
+            request+=aux;
+            request+=";";
+            cout<<request<<endl;
+        }
+    }
+    server->enviar(request);
+
+
+}
+
 
 void generarViajes(Servidor *server){
     server->enviar("Ingrese Origen: BA(Buenos Aires) o MP(Mar del Plata) ");
@@ -453,25 +510,16 @@ void generarViajes(Servidor *server){
     char servicio[40];
 
     strcpy(servicio,serv.c_str());
-
+    verificarServicio(servicio);
     //envia mensaje segun si escribio o no
     string msg;
 
-    system("cls");
+    //system("cls");
             //server->enviar(msg);
 
-    int estado ;
-    string msgSer;
-    estado = verificarServicio(servicio);
-    if(estado = 0){
-        msgSer = "Servicio creado";
-    }else{
-        msgSer= "Servicio ya existe";
-    }
 
-    //system("cls");
-    server->enviar(msg);
 }
+
 
 int verificarServicio(char serv[40]){
     int encontrado = 0;
@@ -520,8 +568,10 @@ int leerArchivoServicios(char serv[40]){
     return encontrado;
 }
 
-void escribirArchivoServicio(char servicio[40]){
 
+
+
+void escribirArchivoServicio(char servicio[40]){
 
     ofstream servicios("servicios.bin", ios::out |ios::binary |ios::app);
     size_t len = strlen(servicio);
@@ -532,7 +582,6 @@ void escribirArchivoServicio(char servicio[40]){
     servicios.close();
     escribirAsientos(servicio);
 }
-
 
 
 std::vector <std::string> traerServicios(char servicio[40]){
@@ -568,13 +617,45 @@ std::vector <std::string> traerServicios(char servicio[40]){
     return arrayServicios;
 }
 
-void escribirAsientos(char servicio[40]){
-    //el id es el tamaño del vector +1
-    std::vector<std::string> arrayServicios = traerServicios(servicio);
-    ofstream file;
-    int idServicio = arrayServicios.size();
+std::vector <std::string> traerServicios(){
+    char servicio[40];
+    int tam = 0;
+    //variable auxiliar para leer archivo
+    char aux[sizeof(servicio)];
+    std::vector<std::string> arrayServicios;
 
-    file.open(to_string(idServicio),std::ofstream::out);
+    ifstream servicios("servicios.bin", ios::in |ios::binary);
+    if(!servicios.is_open()){
+        cout<<"No se pudo abrir el archivo"<<endl;
+        log("server","No se pudo abrir el archivo servicios");
+    }else{
+    //verifico el tamaño del archivo
+    servicios.seekg(0,ios::end);
+    tam = servicios.tellg();
+    //me muevo al principio del archibo
+    servicios.seekg(0,ios::beg);
+
+    //loopeo mientras no este en el final y no lo haya encontrado
+    while(servicios.tellg()<tam)
+    {
+        size_t len = 0;
+        servicios.read((char*)&len, sizeof(len));
+        servicios.read(aux, len);
+        //saco la ultima posicion para borrar basura
+        aux[len] = '\0';
+        //agrego los elementos al vector
+        arrayServicios.push_back(aux);
+    }
+    servicios.close();
+    }
+    return arrayServicios;
+}
+
+void escribirAsientos(char servicio[40]){
+    ofstream file;
+    string serv(servicio);
+    file.open(serv,std::ofstream::out);
+    cout<<serv<<endl;
     //escribo en el archivo fila / col / estado / ocupante
     for(int i = 0 ; i < 3; i++){
         for(int j = 0;j<20;j++){
@@ -582,4 +663,10 @@ void escribirAsientos(char servicio[40]){
         }
     }
     file.close();
+}
+
+void CerrarSesion(Servidor *server,std::string usuario){
+    server->enviar("x - Cierra Sesion");
+    log (usuario, "Cierra Sesion");
+    server->Reiniciar();
 }
