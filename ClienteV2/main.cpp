@@ -14,12 +14,12 @@ using namespace std;
 int countLog;
 int RespLogin;
 string UsuarioLogin;
-std::vector <std::string> generarVectorServicios(string servicios);
 
 
 void menu();
 void log(string msg);
 string& str_replace(const string &search, const string &replace, string &subject);
+string verificarRecibir();
 
 class Cliente{
 public:
@@ -87,6 +87,12 @@ public:
         cout << "Mensaje enviado!" << endl;
     }
 
+    void newEnviar(string msg){
+        strcpy(SendBuff, msg.c_str());
+        send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
+        memset(SendBuff, 0, sizeof(SendBuff));
+    }
+
     void enviarInicio(string msg){
         strcpy(SendBuff, msg.c_str());
         send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
@@ -103,23 +109,29 @@ public:
         }
 
         if (RecvBuff[0] == 'B'){
-                system("cls");
+            system("cls");
             string menu = string(RecvBuff);
             cout << str_replace(";", "\n", menu) << endl;
         }
         if (RecvBuff[0] == 'C'){
-                                    system("cls");
-
+            system("cls");
             string menu = string(RecvBuff);
             cout << str_replace(";", "\n", menu) << endl;
         }
-            if (RecvBuff[0] == 'D'){
+        if (RecvBuff[0] == 'D'){
+            string opt;
             system("cls");
             string menu = string(RecvBuff);
             menu.erase(0,1);
-            std::vector <std::string> servicios = generarVectorServicios(menu);
             cout << str_replace(";", "\n", menu) << endl;
         }
+        if(RecvBuff[0] =='Z'){
+            string menu = string(RecvBuff);
+            menu.erase(0,1);
+            cout<<menu<<endl;
+        }
+
+
         memset(RecvBuff, 0, sizeof(RecvBuff));
     } //ejemplo
 
@@ -138,6 +150,39 @@ public:
 
 
 
+string verificarRecibir(){
+    string RecvBuff;
+if (RecvBuff[0] == 'x'){
+           system("PAUSE");
+           exit(0);
+        }
+
+        if (RecvBuff[0] == 'B'){
+            system("cls");
+            string menu = string(RecvBuff);
+            cout << str_replace(";", "\n", menu) << endl;
+        }
+        if (RecvBuff[0] == 'C'){
+            system("cls");
+            string menu = string(RecvBuff);
+            cout << str_replace(";", "\n", menu) << endl;
+        }
+        if (RecvBuff[0] == 'D'){
+            string opt;
+            system("cls");
+            string menu = string(RecvBuff);
+            menu.erase(0,1);
+            cout << str_replace(";", "\n", menu) << endl;
+        }
+        if(RecvBuff[0] =='Z'){
+            string menu = string(RecvBuff);
+            menu.erase(0,1);
+            cout<<menu<<endl;
+        }
+
+
+    return RecvBuff;
+}
 
 int main(int argc, char *argv[])
 {
@@ -146,8 +191,11 @@ int main(int argc, char *argv[])
 
 
     while(true){
+        //string str = cliente->recibir();
         cliente->recibir();
+        //if(!strcmp(str,'Z')==0){
         cliente->enviar();
+             //       }
     }
 
     return 0;
@@ -182,24 +230,3 @@ string& str_replace(const string &search, const string &replace, string &subject
 }
 
 
- std::vector <std::string> generarVectorServicios(string target){
-    string delim = ";";
-    vector<string> v;
-    if (!target.empty()) {
-        string::size_type start = 0;
-        do {
-            size_t x = target.find(delim, start);
-            if (x == string::npos)
-                break;
-
-            v.push_back(target.substr(start, x-start));
-            start += delim.size();
-        }
-        while (true);
-
-        v.push_back(target.substr(start));
-    }
-    cout<<"pos 0"<<v.at(0)<<endl;
-    cout<<"pos 1"<<v.at(1)<<endl;
-    return v;
-    }

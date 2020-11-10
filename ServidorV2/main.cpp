@@ -254,7 +254,8 @@ void escribirAsientos(char servicio[40]);
 void gestionarServicios(Servidor *server ,std::string usuario);
 void buscarPorOrigen(Servidor *server, std::string usuario);
 std::vector <std::string> traerServicios();
-
+std::vector <std::string> generarVectorServicios(string target);
+void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario);
 
 int main(int argc, char *argv[]){
     while (true){
@@ -333,11 +334,14 @@ menuBusquedas();
 
 }
 
-string menuBusquedas(){
-    string menu = "CBusqueda Servicios;1- Origen;2- Fecha;3- Turno;4- Origen y Fecha;5- Origen y Turno;6-Fecha y Turno;7- Origen ,Fecha y Turno";
+string menuGestionarServicios(){
+    string menu = "CGestionar Servicios;1- Reservar Asiento;2- Liberar Asiento;3- Elegir Otro Servicio;4- Volver al Menu Principal";
     return menu;
 }
-
+string menuBusquedas(){
+    string menu = "CBusqueda Servicios;1- Origen;2- Fecha;3- Turno;4- Origen y Fecha;5- Origen y Turno;6-Fecha y Turno;7- Origen ,Fecha y Turno;8- Volver al Menu Anterior";
+    return menu;
+}
 
 void inicioSesion(string usuario){
     log(usuario,"==================");
@@ -476,6 +480,7 @@ void buscarPorOrigen(Servidor *server, std::string usuario){
     std::vector <std::string> busqueda = traerServicios();
     server->enviar("Escriba el Origen");
     string msg = server->NewRecibir();
+    std::vector<std::string> vectorPosServicios;
 
     for (vector<std::string>::iterator serv=busqueda.begin(); serv!=busqueda.end(); ++serv)
     {
@@ -484,14 +489,27 @@ void buscarPorOrigen(Servidor *server, std::string usuario){
         if(exists){
             request+=aux;
             request+=";";
+            vectorPosServicios.push_back(aux);
             cout<<request<<endl;
         }
     }
+
     server->enviar(request);
-
-
+    string opt = server->NewRecibir();
+    stringstream opcion(opt);
+    int num;
+    opcion>>num;
+    num--;
+    mostrarMenuGestionarPasajes(server,vectorPosServicios.at(num),usuario);
 }
 
+void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario){
+    server->enviar("Ztestestestewststets");
+    server->enviar(menuGestionarServicios());
+    string opt = server->NewRecibir();
+    //falta enviar los asientos
+   // switch()
+}
 
 void generarViajes(Servidor *server){
     server->enviar("Ingrese Origen: BA(Buenos Aires) o MP(Mar del Plata) ");
@@ -664,6 +682,27 @@ void escribirAsientos(char servicio[40]){
     }
     file.close();
 }
+
+ std::vector <std::string> generarVectorServicios(string target){
+    string delim = ";";
+    vector<string> v;
+    if (!target.empty()) {
+        string::size_type start = 0;
+        do {
+            size_t x = target.find(delim, start);
+            if (x == string::npos)
+                break;
+
+            v.push_back(target.substr(start, x-start));
+            start += delim.size();
+        }
+        while (true);
+
+        v.push_back(target.substr(start));
+    }
+    return v;
+    }
+
 
 void CerrarSesion(Servidor *server,std::string usuario){
     server->enviar("x - Cierra Sesion");
