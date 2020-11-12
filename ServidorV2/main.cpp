@@ -200,7 +200,9 @@ void buscarPorOrigen(Servidor *server, std::string usuario);
 std::vector <std::string> traerServicios();
 std::vector <std::string> generarVectorServicios(string target);
 void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario);
-string buscarAsientosServicios(string servicio);
+void buscarAsientosServicios(string servicio);
+void reservarAsiento(string servicio,string usuario);
+void mostrarAsientosServicios(Servidor* server,string servicio);
 
 int main(int argc, char *argv[]){
     while (true){
@@ -449,10 +451,40 @@ void buscarPorOrigen(Servidor *server, std::string usuario){
 }
 
 void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario){
+    mostrarAsientosServicios(server,servicio);
     server->enviar(menuGestionarServicios());
     string opt = server->NewRecibir();
-    //falta enviar los asientos
-   // switch()
+    //muestra los asientos del servicio
+    //revela las opciones
+    switch(opt[0]){
+        case 'a':
+            reservarAsiento(servicio,usuario);
+            break;
+        case 'b':
+            break;
+        case 'c':
+            break;
+        case 'd':
+            break;
+        default:
+            break;
+    }
+}
+
+void mostrarAsientosServicios(Servidor* server,string servicio){
+    string asientos;
+
+
+
+
+
+
+    server->enviar(asientos);
+}
+
+
+void reservarAsiento(string servicio,string usuario){
+    //fopen(servicio+".txt");
 }
 
 void generarViajes(Servidor *server){
@@ -474,15 +506,12 @@ void generarViajes(Servidor *server){
     strcpy(servicio,serv.c_str());
     verificarServicio(servicio);
     //envia mensaje segun si escribio o no
-    string msg;
-
-    //system("cls");
-            //server->enviar(msg);
-
-
+    //TODO
 }
 
 
+//verifica si existe el servicio , si existe vuelve atras
+//sino crea un servicio nuevo
 int verificarServicio(char serv[40]){
     int encontrado = 0;
     encontrado = leerArchivoServicios(serv);
@@ -492,8 +521,9 @@ int verificarServicio(char serv[40]){
     return encontrado;
 }
 
-int leerArchivoServicios(char serv[40]){
 
+//lee archivo para verificar la existencia de servicio
+int leerArchivoServicios(char serv[40]){
     int encontrado = 0;
     int tam = 0;
     //variable auxiliar para leer archivo
@@ -531,7 +561,8 @@ int leerArchivoServicios(char serv[40]){
 }
 
 
-
+//escribe servicio en archivo
+//y genera asientos para estos
 void escribirArchivoServicio(char servicio[40]){
 
     ofstream servicios("servicios.bin", ios::out |ios::binary |ios::app);
@@ -582,6 +613,7 @@ std::vector <std::string> traerServicios(){
 
 //escribo el archivo de asientos como el nombre del servicio, contiene el estado del asiento y el ocupante
 void escribirAsientos(char servicio[40]){
+    char letrasAsientos[3] = {'a','b','c'};
     ofstream file;
     string serv(servicio);
     file.open(serv,std::ofstream::out);
@@ -590,13 +622,16 @@ void escribirAsientos(char servicio[40]){
     for(int i = 0 ; i < 3; i++){
         for(int j = 0;j<20;j++){
                 //guarda el estado y quien lo ocupa
-            file << "0"<< ";"<< ";"<<"\n"<< endl;
+            file << letrasAsientos[i]<<j+1<<";"<<";"<<"\n"<< endl;
         }
     }
     file.close();
 }
 
-string buscarAsientosServicios(string servicio){
+void buscarAsientosServicios(string servicio){
+    string asientos;
+
+
 
 
 }
