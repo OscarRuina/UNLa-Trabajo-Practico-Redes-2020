@@ -1706,3 +1706,200 @@
 2020-11-13_13:20: INICIO SESION
 2020-11-13_13:20: ==================
 2020-11-13_13:22: Cierra Sesion
+2020-11-13_13:35: ==================
+2020-11-13_13:35: INICIO SESION
+2020-11-13_13:35: ==================
+2020-11-13_13:35: Vio registro de actividades
+2020-11-13_13:35: Cierra Sesion
+2020-11-13_13:35: ==================
+2020-11-13_13:35: INICIO SESION
+2020-11-13_13:35: ==================
+2020-11-13_13:36: ZVio registro de actividades
+2020-11-13_13:36: Ingresa un nuevo servicio
+2020-11-13_13:36: ==================
+2020-11-13_13:36: INICIO SESION
+2020-11-13_13:36: ==================
+2020-11-13_13:36: Vio registro de actividades
+2020-11-13_13:37: Ingresa un nuevo servicio
+2020-11-13_13:37: Vio registro de actividades
+2020-11-13_13:37: Realiza consulta de servicio
+2020-11-13_13:37: Falla en reservar un asiento1:A;
+2020-11-13_13:37: Falla en reservar un asiento1:a;
+2020-11-13_13:37: Falla en reservar un asiento1:a;
+2020-11-13_13:37: Falla en reservar un asiento3:a;
+2020-11-13_13:37: Falla en reservar un asiento3:3;
+2020-11-13_13:37: Libera un asiento1:1;
+2020-11-13_13:37: Libera un asientox:x;
+2020-11-13_13:38: ==================
+2020-11-13_13:38: INICIO SESION
+2020-11-13_13:38: ==================
+2020-11-13_13:38: Vio registro de actividades
+2020-11-13_13:38: Realiza consulta de servicio
+2020-11-13_13:38: Reserva un asientoa:1;
+2020-11-13_13:38: Libera un asientoa:1;
+2020-11-13_13:38: Reserva un asientoa:5;
+2020-11-13_13:38: Libera un asientoa:5;
+2020-11-13_13:38: Cierra Sesion
+2020-11-13_13:39: ==================
+2020-11-13_13:39: INICIO SESION
+2020-11-13_13:39: ==================
+2020-11-13_13:39: Vio registro de actividades
+2020-11-13_13:40: ==================
+2020-11-13_13:40: INICIO SESION
+2020-11-13_13:40: ==================
+2020-11-13_13:40: Realiza consulta de servicio
+2020-11-13_13:40: Reserva un asiento a:1;
+2020-11-13_13:40: Falla en reservar un asiento a:1;
+2020-11-13_13:40: Libera un asiento a:1;
+2020-11-13_13:40: Cierra Sesion
+2020-11-13_13:41: ==================
+2020-11-13_13:41: INICIO SESION
+2020-11-13_13:41: ==================
+2020-11-13_13:41: Vio registro de actividades
+2020-11-13_13:41: Cierra Sesion
+2020-11-13_13:48: ==================
+2020-11-13_13:48: INICIO SESION
+2020-11-13_13:48: ==================
+2020-11-13_13:48: Vio registro de actividades
+2020-11-13_13:48: Cierra Sesion
+2020-11-13_13:58: ==================
+2020-11-13_13:58: INICIO SESION
+2020-11-13_13:58: ==================
+2020-11-13_13:58: Realiza consulta de servicio
+2020-11-13_14:1: ==================
+2020-11-13_14:1: INICIO SESION
+2020-11-13_14:1: ==================
+2020-11-13_14:1: Realiza consulta de servicio
+2020-11-13_14:3: ==================
+2020-11-13_14:3: INICIO SESION
+2020-11-13_14:3: ==================
+2020-11-13_14:4: Realiza consulta de servicio
+2020-11-13_14:4: Reserva un asiento a:1;
+2020-11-13_14:4: Libera un asiento a:1;
+2020-11-13_14:4: Cierra Sesion
+2020-11-13_14:8: ==================
+2020-11-13_14:8: INICIO SESION
+2020-11-13_14:8: ==================
+2020-11-13_14:9: Realiza consulta de servicio
+2020-11-13_14:11: ==================
+2020-11-13_14:11: INICIO SESION
+2020-11-13_14:11: ==================
+2020-11-13_14:11: Realiza consulta de servicio
+2020-11-13_14:13: ==================
+2020-11-13_14:13: INICIO SESION
+2020-11-13_14:13: ==================
+2020-11-13_14:13: Realiza consulta de servicio
+2020-11-13_14:13: Reserva un asiento a:1;
+2020-11-13_14:13: Libera un asiento a:1;
+2020-11-13_14:14: ==================
+2020-11-13_14:14: INICIO SESION
+2020-11-13_14:14: ==================
+2020-11-13_14:15: Ingresa un nuevo servicio
+2020-11-13_14:15: Realiza consulta de servicio
+2020-11-13_14:15: Cierra Sesion
+2020-11-13_14:17: ==================
+2020-11-13_14:17: INICIO SESION
+2020-11-13_14:17: ==================
+2020-11-13_14:17: Ingresa un nuevo servicio
+2020-11-13_14:17: Realiza consulta de servicio
+2020-11-13_14:18: ==================
+2020-11-13_14:18: INICIO SESION
+2020-11-13_14:18: ==================
+2020-11-13_14:18: Realiza consulta de servicio
+2020-11-13_14:19: ==================
+2020-11-13_14:19: INICIO SESION
+2020-11-13_14:19: ==================
+2020-11-13_14:19: Ingresa un nuevo servicio
+2020-11-13_14:20: Realiza consulta de servicio
+2020-11-13_14:20: Vio registro de actividades
+2020-11-13_14:20: Vio registro de actividades
+2020-11-13_14:20: Vio registro de actividades
+2020-11-13_14:20: Vio registro de actividades
+2020-11-13_14:20: Vio registro de actividades
+2020-11-13_14:22: ==================
+2020-11-13_14:22: INICIO SESION
+2020-11-13_14:22: ==================
+2020-11-13_14:22: Vio registro de actividades
+2020-11-13_14:22: Cierra Sesion
+2020-11-13_14:25: ==================
+2020-11-13_14:25: INICIO SESION
+2020-11-13_14:25: ==================
+2020-11-13_14:25: Cierra Sesion
+2020-11-13_14:27: ==================
+2020-11-13_14:27: INICIO SESION
+2020-11-13_14:27: ==================
+2020-11-13_14:29: ==================
+2020-11-13_14:29: INICIO SESION
+2020-11-13_14:29: ==================
+2020-11-13_14:30: Realiza consulta de servicio
+2020-11-13_14:32: ==================
+2020-11-13_14:32: INICIO SESION
+2020-11-13_14:32: ==================
+2020-11-13_14:32: Realiza consulta de servicio
+2020-11-13_14:32: Reserva un asiento a:1;
+2020-11-13_14:32: Libera un asiento a:1;
+2020-11-13_14:32: Reserva un asiento a:1;
+2020-11-13_14:32: Libera un asiento a:1;
+2020-11-13_14:32: Reserva un asiento a:1;
+2020-11-13_14:32: Falla en liberar un asiento a:2;
+2020-11-13_14:32: Falla en reservar un asiento x:x;
+2020-11-13_14:36: ==================
+2020-11-13_14:36: INICIO SESION
+2020-11-13_14:36: ==================
+2020-11-13_14:36: Cierra Sesion
+2020-11-13_14:38: ==================
+2020-11-13_14:38: INICIO SESION
+2020-11-13_14:38: ==================
+2020-11-13_14:39: ==================
+2020-11-13_14:39: INICIO SESION
+2020-11-13_14:39: ==================
+2020-11-13_14:40: ==================
+2020-11-13_14:40: INICIO SESION
+2020-11-13_14:40: ==================
+2020-11-13_14:40: Cierra Sesion
+2020-11-13_14:42: ==================
+2020-11-13_14:42: INICIO SESION
+2020-11-13_14:42: ==================
+2020-11-13_14:42: Cierra Sesion
+2020-11-13_14:42: ==================
+2020-11-13_14:42: INICIO SESION
+2020-11-13_14:42: ==================
+2020-11-13_14:42: Cierra Sesion
+2020-11-13_14:49: ==================
+2020-11-13_14:49: INICIO SESION
+2020-11-13_14:49: ==================
+2020-11-13_14:49: Ingresa un nuevo servicio
+2020-11-13_14:49: Realiza consulta de servicio
+2020-11-13_14:50: ==================
+2020-11-13_14:50: INICIO SESION
+2020-11-13_14:50: ==================
+2020-11-13_14:50: Realiza consulta de servicio
+2020-11-13_14:51: ==================
+2020-11-13_14:51: INICIO SESION
+2020-11-13_14:51: ==================
+2020-11-13_14:51: Ingresa un nuevo servicio
+2020-11-13_14:51: Realiza consulta de servicio
+2020-11-13_14:54: ==================
+2020-11-13_14:54: INICIO SESION
+2020-11-13_14:54: ==================
+2020-11-13_14:54: Ingresa un nuevo servicio
+2020-11-13_14:54: Ingresa un nuevo servicio
+2020-11-13_14:54: Realiza consulta de servicio
+2020-11-13_14:55: ==================
+2020-11-13_14:55: INICIO SESION
+2020-11-13_14:55: ==================
+2020-11-13_14:55: Ingresa un nuevo servicio
+2020-11-13_14:56: Realiza consulta de servicio
+2020-11-13_14:57: ==================
+2020-11-13_14:57: INICIO SESION
+2020-11-13_14:57: ==================
+2020-11-13_14:57: Realiza consulta de servicio
+2020-11-13_14:57: Reserva un asiento a:1;
+2020-11-13_14:57: Libera un asiento a:1;
+2020-11-13_14:57: Cierra Sesion
+2020-11-13_15:0: ==================
+2020-11-13_15:0: INICIO SESION
+2020-11-13_15:0: ==================
+2020-11-13_15:0: Ingresa un nuevo servicio
+2020-11-13_15:1: Ingresa un nuevo servicio
+2020-11-13_15:1: Cierra Sesion

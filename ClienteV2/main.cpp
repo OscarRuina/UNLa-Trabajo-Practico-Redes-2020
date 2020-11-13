@@ -17,7 +17,6 @@ string UsuarioLogin;
 
 
 void menu();
-void log(string msg);
 string& str_replace(const string &search, const string &replace, string &subject);
 int verificarRecibir(string msg);
 void mostrarAsientos(string asientos);
@@ -32,7 +31,8 @@ public:
     int resp;
     char SendBuff[102400],RecvBuff[102400],user[1024],password[1024];
 
-    Cliente(){
+    Cliente(int puerto){
+
         countLog = 1;
         RespLogin = 0;
        //Inicializamos la libreria winsock2
@@ -66,14 +66,17 @@ public:
        memset(&servidor, 0, sizeof(servidor)) ;
        memcpy(&servidor.sin_addr, hp->h_addr, hp->h_length);
        servidor.sin_family = hp->h_addrtype;
-       servidor.sin_port = htons(6000);
+       servidor.sin_port = htons(puerto);
 
        // Nos conectamos con el servidor...
        if(connect(conexion_socket,(struct sockaddr *)&servidor,sizeof(servidor))==SOCKET_ERROR){
           cout<<"Fallo al conectarse con el servidor "<<WSAGetLastError()<<endl;
+
           closesocket(conexion_socket);
           WSACleanup();
           getchar();
+          system("pause");
+            exit(0);
 
        }
        cout<<"Conexion establecida con: "<<inet_ntoa(servidor.sin_addr)<<endl;
@@ -86,7 +89,6 @@ public:
         cin>>this->SendBuff;
         send(conexion_socket, SendBuff, sizeof(SendBuff), 0);
         memset(SendBuff, 0, sizeof(SendBuff));
-        cout << "Mensaje enviado!" << endl;
     }
 
     void newEnviar(string msg){
@@ -127,21 +129,30 @@ public:
 //verifica los estados del mensaje
 int verificarRecibir(string msg){
     int responder = 1;
-    cout<<"el servidor dice:\n"<<endl;
-        if(msg[0]=='Z'){
-            responder = 0;
-            //borro el primer char
-        }
+
 
         if (msg[0] == 'x'){
             cout<<msg<<endl;
            system("PAUSE");
            exit(0);
-        }else if(msg[0] == 'L'){
+        }else if(msg[0] == 'B'){
+            msg.erase(0,1);
             responder = 0;
             string asientos = string(msg);
             mostrarAsientos(asientos);
-        }else {
+        }else if(msg[0] == 'R'){
+            msg.erase(0,1);
+            string menu = string(msg);
+            cout << str_replace(";", "\n", msg) << endl;
+        }else if(msg[0]=='N'){
+            responder = 0;
+            msg.erase(0,1);
+            string menu = string(msg);
+            cout << str_replace(";", "\n", msg) << endl;
+            system("pause");
+        }
+        else{
+            system("cls");
             msg.erase(0,1);
             string menu = string(msg);
             cout << str_replace(";", "\n", msg) << endl;
@@ -151,6 +162,7 @@ int verificarRecibir(string msg){
 
 
 void mostrarAsientos(string asientos){
+    system("cls");
     char letrasAsientos[3] = {'A','B','C'};
     int counter = 0;
 
@@ -182,7 +194,8 @@ void mostrarAsientos(string asientos){
             cout<<"X ";
         }
     }
-            cout<<"\n";
+            cout<<"\n"<<endl;
+            cout<<"\n"<<endl;
 
 }
 
@@ -209,7 +222,10 @@ vector<string> procesarAsientos(string asientos){
 
 int main(int argc, char *argv[])
 {
-    Cliente *cliente = new Cliente();
+    cout<<"Ingrese puerto"<<endl;
+    int puerto = 0;
+    cin >> puerto;
+    Cliente *cliente = new Cliente(puerto);
     cliente->enviarInicio("InicioSeccion");
     int responder = 1;
     while(true){
