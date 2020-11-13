@@ -8,6 +8,7 @@
 #include <sstream>
 #include <vector>
 #include <istream>
+#include <algorithm>    // std::find
 
 
 using namespace std;
@@ -208,6 +209,8 @@ void reservarAsiento(Servidor *server,string servicio,string usuario);
 void mostrarAsientosServicios(Servidor* server,string servicio);
 int verificarAsientoLibre(string servicio,string asiento);
 void ocuparAsiento(string servicio,string asiento,string usuario);
+void liberarAsiento(Servidor* server, string servicio,string usuario);
+void liberarAsientoOcupado(string servicio,string asiento,string usuario);
 
 int main(int argc, char *argv[]){
     while (true){
@@ -295,7 +298,7 @@ menuBusquedas();
 }
 
 string menuGestionarServicios(){
-    string menu = "CGestionar Servicios;1- Reservar Asiento;2- Liberar Asiento;3- Elegir Otro Servicio;4- Volver al Menu Principal";
+    string menu = "CGestionar Servicios;1- Reservar Asiento;2- Liberar Asiento;3- Elegir Otro Servicio";
     return menu;
 }
 string menuBusquedas(){
@@ -450,6 +453,39 @@ void buscarPorOrigen(Servidor *server, std::string usuario){
     {
         aux =  serv->c_str();
         bool exists = aux.find(msg) != std::string::npos;
+
+        if(exists){
+            request+=aux;
+            request+=";";
+            vectorPosServicios.push_back(aux);
+            cout<<request<<endl;
+        }
+    }
+
+    server->enviar(request);
+    string opt = server->NewRecibir();
+    stringstream opcion(opt);
+    int num;
+    opcion>>num;
+    num--;
+    mostrarMenuGestionarPasajes(server,vectorPosServicios.at(num),usuario);
+}
+
+
+
+
+void buscarPorFecha(Servidor *server, std::string usuario){
+    std::string request =  "D";
+    std::string aux;
+    std::vector <std::string> busqueda = traerServicios();
+    server->enviar("Escriba la fecha");
+    string msg = server->NewRecibir();
+    std::vector<std::string> vectorPosServicios;
+
+    for (vector<std::string>::iterator serv=busqueda.begin(); serv!=busqueda.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg) != std::string::npos;
         if(exists){
             request+=aux;
             request+=";";
@@ -481,6 +517,7 @@ void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario
             reservarAsiento(server,servicio,usuario);
             break;
         case '2':
+            liberarAsiento(server,servicio,usuario);
             break;
         case '3':
             seguir = 0;
@@ -532,6 +569,26 @@ void reservarAsiento(Servidor* server,string servicio,string usuario){
     }
 }
 
+void liberarAsiento(Servidor* server,string servicio,string usuario){
+
+    string fil,col;
+    server->enviar("Ingrese fila");
+    fil = server->NewRecibir();
+    server->enviar("Ingrese columna");
+    col = server->NewRecibir();
+    //fopen(servicio+".txt");
+    string asiento= fil+";"+col;
+    //verifica que el asiento este libre
+    if(verificarAsientoLibre(servicio,asiento)==1){
+        cout<<"entro ocupado"<<endl;
+    server->enviar("ZEl Asiento no esta ocupado");
+
+    }else{
+            cout<<"entro ok"<<endl;
+            liberarAsientoOcupado(servicio,asiento,usuario);
+    }
+}
+
 
 void ocuparAsiento(string servicio,string asiento,string usuario){
     string asientoAOcupar=asiento+";"+";";
@@ -556,9 +613,9 @@ void ocuparAsiento(string servicio,string asiento,string usuario){
     rename(servicio2.c_str(),servicio.c_str());
 }
 
-void liberarAsiento(string servicio,string asiento,string usuario){
-    string asientoAOcupar=asiento+";"+";";
-    string asientoUsuario=asiento+";"+usuario+";";
+void liberarAsientoOcupado(string servicio,string asiento,string usuario){
+    string asientoUsuarioALiberar=asiento+";"+usuario+";";
+    string asientoLiberado=asiento+";"+";";
     string linea;
     string servicio2 = "servicio2";
     ifstream file;
@@ -566,8 +623,8 @@ void liberarAsiento(string servicio,string asiento,string usuario){
     ofstream temp;
     temp.open(servicio2,ios::out);
     while(getline(file,linea)){
-        if(linea.find(asientoAOcupar) != string::npos){
-            temp<<asientoUsuario<<endl;
+        if(linea.find(asientoUsuarioALiberar) != string::npos){
+            temp<<asientoLiberado<<endl;
             cout<<linea<<endl;
         }else{
             temp<<linea<<endl;
@@ -584,22 +641,21 @@ void liberarAsiento(string servicio,string asiento,string usuario){
 int verificarAsientoLibre(string servicio,string asiento){
 
     asiento=asiento+";"+";";
-   ifstream asientosServicio;
-   string linea;
+    ifstream asientosServicio;
+    string linea;
 
-
-   int libre  = 0;
-   asientosServicio.open(servicio,ios::in); // abro el archivo en modo lectura
-   if(asientosServicio.fail()){
-    cout<<"No se pudo abrir el archivo"<<endl;
+    int libre  = 0;
+    asientosServicio.open(servicio,ios::in); // abro el archivo en modo lectura
+    if(asientosServicio.fail()){
+        cout<<"No se pudo abrir el archivo"<<endl;
     log("server","No se pudo abrir el archivo");
-   }
-   while(getline(asientosServicio,linea)){
+    }
+    while(getline(asientosServicio,linea)){
         if(linea.find(asiento) != string::npos){
             libre = 1;
         }
-   }
-   asientosServicio.close();
+    }
+    asientosServicio.close();
     return libre;
 }
 
