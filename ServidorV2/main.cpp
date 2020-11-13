@@ -211,6 +211,14 @@ int verificarAsientoLibre(string servicio,string asiento);
 void ocuparAsiento(string servicio,string asiento,string usuario);
 void liberarAsiento(Servidor* server, string servicio,string usuario);
 void liberarAsientoOcupado(string servicio,string asiento,string usuario);
+void buscarPorOrigen(Servidor *server, std::string usuario);
+
+void buscarPorFecha(Servidor *server, std::string usuario);
+void buscarPorTurno(Servidor *server, std::string usuario);
+void buscarPorOrigenYFecha(Servidor *server, std::string usuario);
+void buscarPorOrigenYTurno(Servidor *server, std::string usuario);
+void buscarPorFechaYTurno(Servidor *server, std::string usuario);
+void buscarPorOrigenFechaYTurno(Servidor *server, std::string usuario);
 
 int main(int argc, char *argv[]){
     while (true){
@@ -423,21 +431,29 @@ void gestionarServicios(Servidor *server, std::string usuario){
             buscarPorOrigen(server,usuario);
             break;
         case '2':
+            buscarPorFecha(server,usuario);
             break;
         case '3':
+            buscarPorTurno(server,usuario);
             break;
         case '4':
+            buscarPorOrigenYFecha(server,usuario);
             break;
         case '5':
+            buscarPorOrigenYTurno(server,usuario);
             break;
         case '6':
+            buscarPorFechaYTurno(server,usuario);
             break;
         case '7':
+            buscarPorOrigenFechaYTurno(server,usuario);
             break;
-          default:
+        case '8':
             seguir = 0;
             break;
-    }
+        default:
+            break;
+        }
     }
 }
 
@@ -445,7 +461,7 @@ void buscarPorOrigen(Servidor *server, std::string usuario){
     std::string request =  "D";
     std::string aux;
     std::vector <std::string> busqueda = traerServicios();
-    server->enviar("Escriba el Origen");
+    server->enviar("Escriba el Origen: BA - MP");
     string msg = server->NewRecibir();
     std::vector<std::string> vectorPosServicios;
 
@@ -455,13 +471,14 @@ void buscarPorOrigen(Servidor *server, std::string usuario){
         bool exists = aux.find(msg) != std::string::npos;
 
         if(exists){
-            request+=aux;
+            if(aux[0]==msg[0]&&aux[1]==msg[1]){
+                 request+=aux;
             request+=";";
             vectorPosServicios.push_back(aux);
             cout<<request<<endl;
+            }
         }
     }
-
     server->enviar(request);
     string opt = server->NewRecibir();
     stringstream opcion(opt);
@@ -470,15 +487,41 @@ void buscarPorOrigen(Servidor *server, std::string usuario){
     num--;
     mostrarMenuGestionarPasajes(server,vectorPosServicios.at(num),usuario);
 }
-
-
 
 
 void buscarPorFecha(Servidor *server, std::string usuario){
     std::string request =  "D";
     std::string aux;
     std::vector <std::string> busqueda = traerServicios();
-    server->enviar("Escriba la fecha");
+    server->enviar("Escriba la fecha: DD/MM/AAAA");
+    string msg = server->NewRecibir();
+    std::vector<std::string> vectorPosServicios;
+
+    for (vector<std::string>::iterator serv=busqueda.begin(); serv!=busqueda.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg) != std::string::npos;
+        if(exists){
+            request+=aux;
+            request+=";";
+            vectorPosServicios.push_back(aux);
+            cout<<request<<endl;
+        }
+    }
+    server->enviar(request);
+    string opt = server->NewRecibir();
+    stringstream opcion(opt);
+    int num;
+    opcion>>num;
+    num--;
+    mostrarMenuGestionarPasajes(server,vectorPosServicios.at(num),usuario);
+}
+
+void buscarPorTurno(Servidor *server, std::string usuario){
+    std::string request =  "D";
+    std::string aux;
+    std::vector <std::string> busqueda = traerServicios();
+    server->enviar("Escriba El Turno: TM - TT - TN");
     string msg = server->NewRecibir();
     std::vector<std::string> vectorPosServicios;
 
@@ -502,6 +545,185 @@ void buscarPorFecha(Servidor *server, std::string usuario){
     num--;
     mostrarMenuGestionarPasajes(server,vectorPosServicios.at(num),usuario);
 }
+
+void buscarPorOrigenYFecha(Servidor *server, std::string usuario){
+    std::string request =  "D";
+    std::string aux;
+    std::vector <std::string> busqueda = traerServicios();
+    server->enviar("Escriba el Origen: BA - MP");
+    string msg = server->NewRecibir();
+    server->enviar("Escriba la fecha: DD/MM/AAAA");
+    string msg2 = server->NewRecibir();
+    std::vector<std::string> vectorPosServicios;
+    std::vector<std::string> vectorPosServicios2;
+
+
+
+    for (vector<std::string>::iterator serv=busqueda.begin(); serv!=busqueda.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg) != std::string::npos;
+        if(exists){
+            if(aux[0]==msg[0]&&aux[1]==msg[1]){
+            vectorPosServicios.push_back(aux);
+            }
+        }
+    }
+    for (vector<std::string>::iterator serv=vectorPosServicios.begin(); serv!=vectorPosServicios.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg2) != std::string::npos;
+        if(exists){
+            request+=aux;
+            request+=";";
+            vectorPosServicios2.push_back(aux);
+            cout<<request<<endl;
+            }
+        }
+    server->enviar(request);
+    string opt = server->NewRecibir();
+    stringstream opcion(opt);
+    int num;
+    opcion>>num;
+    num--;
+    mostrarMenuGestionarPasajes(server,vectorPosServicios2.at(num),usuario);
+}
+
+void buscarPorOrigenYTurno(Servidor *server, std::string usuario){
+    std::string request =  "D";
+    std::string aux;
+    std::vector <std::string> busqueda = traerServicios();
+    server->enviar("Escriba Origen: BA - MP");
+    string msg = server->NewRecibir();
+    server->enviar("Escriba el Turno: TM - TT -TN");
+    string msg2 = server->NewRecibir();
+    std::vector<std::string> vectorPosServicios;
+    std::vector<std::string> vectorPosServicios2;
+
+    for (vector<std::string>::iterator serv=busqueda.begin(); serv!=busqueda.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg) != std::string::npos;
+        if(exists){
+            if(aux[0]==msg[0]&&aux[1]==msg[1]){
+            vectorPosServicios.push_back(aux);
+        }
+        }
+    }
+    for (vector<std::string>::iterator serv=vectorPosServicios.begin(); serv!=vectorPosServicios.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg2) != std::string::npos;
+        if(exists){
+            request+=aux;
+            request+=";";
+            vectorPosServicios2.push_back(aux);
+            cout<<request<<endl;
+            }
+        }
+    server->enviar(request);
+    string opt = server->NewRecibir();
+    stringstream opcion(opt);
+    int num;
+    opcion>>num;
+    num--;
+    mostrarMenuGestionarPasajes(server,vectorPosServicios2.at(num),usuario);
+}
+
+void buscarPorFechaYTurno(Servidor *server, std::string usuario){
+    std::string request =  "D";
+    std::string aux;
+    std::vector <std::string> busqueda = traerServicios();
+    server->enviar("Escriba la Fecha: DD/MM/AAAA");
+    string msg = server->NewRecibir();
+    server->enviar("Escriba el Turno: TM - TT -TN");
+    string msg2 = server->NewRecibir();
+    std::vector<std::string> vectorPosServicios;
+    std::vector<std::string> vectorPosServicios2;
+
+    for (vector<std::string>::iterator serv=busqueda.begin(); serv!=busqueda.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg) != std::string::npos;
+        if(exists){
+
+            vectorPosServicios.push_back(aux);
+        }
+    }
+    for (vector<std::string>::iterator serv=vectorPosServicios.begin(); serv!=vectorPosServicios.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg2) != std::string::npos;
+        if(exists){
+            request+=aux;
+            request+=";";
+            vectorPosServicios2.push_back(aux);
+            cout<<request<<endl;
+            }
+        }
+    server->enviar(request);
+    string opt = server->NewRecibir();
+    stringstream opcion(opt);
+    int num;
+    opcion>>num;
+    num--;
+    mostrarMenuGestionarPasajes(server,vectorPosServicios2.at(num),usuario);
+}
+
+void buscarPorOrigenFechaYTurno(Servidor *server, std::string usuario){
+    std::string request =  "D";
+    std::string aux;
+    std::vector <std::string> busqueda = traerServicios();
+    server->enviar("Escriba Origen: BA - MP");
+    string msg = server->NewRecibir();
+    server->enviar("Escriba la Fecha: DD/MM/AAAA");
+    string msg2 = server->NewRecibir();
+    server->enviar("Escriba el Turno: TM - TT -TN");
+    string msg3 = server->NewRecibir();
+    std::vector<std::string> vectorPosServicios;
+    std::vector<std::string> vectorPosServicios2;
+    std::vector<std::string> vectorPosServicios3;
+
+
+    for (vector<std::string>::iterator serv=busqueda.begin(); serv!=busqueda.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg) != std::string::npos;
+        if(exists){
+        if(aux[0]==msg[0]&&aux[1]==msg[1]){
+            vectorPosServicios.push_back(aux);
+
+            }
+        }
+    }
+    for (vector<std::string>::iterator serv=vectorPosServicios.begin(); serv!=vectorPosServicios.end(); ++serv)
+    {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg2) != std::string::npos;
+        if(exists){
+            vectorPosServicios2.push_back(aux);
+            }
+        }
+    for (vector<std::string>::iterator serv=vectorPosServicios2.begin(); serv!=vectorPosServicios2.end(); ++serv)
+        {
+        aux =  serv->c_str();
+        bool exists = aux.find(msg3) != std::string::npos;
+        if(exists){
+            request+=aux;
+            request+=";";
+            vectorPosServicios3.push_back(aux);
+            cout<<request<<endl;
+            }
+        }
+    server->enviar(request);
+    string opt = server->NewRecibir();
+    stringstream opcion(opt);
+    int num;
+    opcion>>num;
+    num--;
+    mostrarMenuGestionarPasajes(server,vectorPosServicios3.at(num),usuario);
+}
+
 
 void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario){
     bool seguir = 1;
