@@ -43,7 +43,7 @@
 	<ctime>
 	<sstream>
 
-1605031789 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\clientev2\main.cpp
+1605145531 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\clientev2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
@@ -53,4 +53,5 @@
 	<ctime>
 	<sstream>
 	<vector>
+	<map>
 

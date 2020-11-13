@@ -7,7 +7,7 @@
 #include <ctime>
 #include <sstream>
 #include <vector>
-
+#include <map>
 
 using namespace std;
 
@@ -20,6 +20,8 @@ void menu();
 void log(string msg);
 string& str_replace(const string &search, const string &replace, string &subject);
 int verificarRecibir(string msg);
+void mostrarAsientos(string asientos);
+vector<string> procesarAsientos(string asientos);
 
 class Cliente{
 public:
@@ -131,18 +133,81 @@ int verificarRecibir(string msg){
             //borro el primer char
             msg.erase(0,1);
         }
+
         if (msg[0] == 'x'){
+            cout<<msg<<endl;
            system("PAUSE");
            exit(0);
-        }else{
-        {
+        }else if(msg[0] == 'L'){
+            responder = 0;
             msg.erase(0,1);
-            system("cls");
+            string asientos = string(msg);
+            mostrarAsientos(asientos);
+        }else {
+            msg.erase(0,1);
             string menu = string(msg);
             cout << str_replace(";", "\n", msg) << endl;
         }
-    }
     return responder;
+}
+
+void mostrarAsientos(string asientos){
+    char letrasAsientos[3] = {'A','B','C'};
+    int counter = 0;
+
+    vector<string> vectorAsientos = procesarAsientos(asientos);
+    string encabezado1 = "  |                   1 1 1 1 1 1 1 1 1 1 2";
+    string encabezado2 = "  | 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0";
+    string encabezado3 = "  | ---------------------------------------";
+
+
+    string split       = "  | =======================================";
+
+    cout<<encabezado1<<endl;
+    cout<<encabezado2<<endl;
+    cout<<encabezado3<<endl;
+
+
+    for(int i=0; i < vectorAsientos.size(); i++){
+        if(i%20==0&&i>0){
+            cout<<"\n";
+        }
+        if(i==40){
+                cout<<split<<endl;
+        }
+        if(i==0||i==20||i==40){
+            cout<<letrasAsientos[counter]<<" | ";
+            counter++;
+        }
+        if(vectorAsientos.at(i).size()==0){
+            cout<<"O ";
+        }else{
+            cout<<"X ";
+        }
+    }
+            cout<<"\n";
+
+}
+
+vector<string> procesarAsientos(string asientos){
+
+    vector<string> vectorAsientos;
+    int counter= 0;
+    std::string delimiter = ";";
+    size_t pos = 0;
+    std::string token;
+
+    while ((pos = asientos.find(delimiter)) != std::string::npos) {
+        counter++;
+        token = asientos.substr(0, pos);
+        if(counter%3==0){
+            vectorAsientos.push_back(token);
+        }
+        asientos.erase(0, pos + delimiter.length());
+    }
+
+
+    return vectorAsientos;
 }
 
 int main(int argc, char *argv[])

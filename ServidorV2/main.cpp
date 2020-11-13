@@ -176,6 +176,7 @@ public:
     }
 
     void Reiniciar(){
+        times = 0;
         closesocket(comunicacion_socket);
         closesocket(conexion_socket);
         //conexion_socket=socket(AF_INET,SOCK_STREAM, 0);
@@ -208,7 +209,9 @@ int main(int argc, char *argv[]){
     while (true){
         //system("cls");
         Servidor *server = new Servidor();
-
+        times = 0;
+        t0 = clock();
+        t1 = clock();
         Intentos = 0;
         server->recibir();
         int encontrado = 0;
@@ -261,7 +264,13 @@ int main(int argc, char *argv[]){
             //recibo respuesta y entro a las subopciones
             string opt = server->NewRecibir();
             generarOpciones(opt,server,usuario);
+            if(opt[0]=='x'){
+                encontrado = 0;
+                server->Reiniciar();
+            }
+
             if ( opt == "4" ){
+                server->Reiniciar();
                 break;
             }
         }
@@ -471,15 +480,26 @@ void mostrarMenuGestionarPasajes(Servidor *server,string servicio,string usuario
     }
 }
 
+
+
 void mostrarAsientosServicios(Servidor* server,string servicio){
-    string asientos;
+
+   ifstream file;
+   string linea;
+   string asiento = "L";
 
 
-
-
-
-
-    server->enviar(asientos);
+   int encontrado  = 0;
+   file.open(servicio,ios::in); // abro el archivo en modo lectura
+   if(file.fail()){
+        cout<<"No se pudo abrir el archivo"<<endl;
+        log("server","No se pudo abrir el archivo de servicio asientos");
+   }
+   while(getline(file,linea)){
+        asiento+=linea;
+   }
+    file.close();
+    server->enviar(asiento);
 }
 
 
@@ -622,19 +642,13 @@ void escribirAsientos(char servicio[40]){
     for(int i = 0 ; i < 3; i++){
         for(int j = 0;j<20;j++){
                 //guarda el estado y quien lo ocupa
-            file << letrasAsientos[i]<<j+1<<";"<<";"<<"\n"<< endl;
+            file << letrasAsientos[i]<<";"<<j+1<<";"<<";"<<"\n"<< endl;
         }
     }
     file.close();
 }
 
-void buscarAsientosServicios(string servicio){
-    string asientos;
 
-
-
-
-}
 
  std::vector <std::string> generarVectorServicios(string target){
     string delim = ";";
