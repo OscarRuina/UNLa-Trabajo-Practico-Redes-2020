@@ -131,7 +131,6 @@ int verificarRecibir(string msg){
         if(msg[0]=='Z'){
             responder = 0;
             //borro el primer char
-            msg.erase(0,1);
         }
 
         if (msg[0] == 'x'){
@@ -140,7 +139,6 @@ int verificarRecibir(string msg){
            exit(0);
         }else if(msg[0] == 'L'){
             responder = 0;
-            msg.erase(0,1);
             string asientos = string(msg);
             mostrarAsientos(asientos);
         }else {
@@ -151,6 +149,7 @@ int verificarRecibir(string msg){
     return responder;
 }
 
+
 void mostrarAsientos(string asientos){
     char letrasAsientos[3] = {'A','B','C'};
     int counter = 0;
@@ -159,8 +158,6 @@ void mostrarAsientos(string asientos){
     string encabezado1 = "  |                   1 1 1 1 1 1 1 1 1 1 2";
     string encabezado2 = "  | 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0";
     string encabezado3 = "  | ---------------------------------------";
-
-
     string split       = "  | =======================================";
 
     cout<<encabezado1<<endl;
