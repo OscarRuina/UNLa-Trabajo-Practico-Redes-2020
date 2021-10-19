@@ -9,7 +9,20 @@
 	<ctime>
 	<sstream>
 
-1603160449 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidor\main.cpp
+1605312669 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidor\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+	<vector>
+	<istream>
+	<algorithm>
+
+1603229499 source:c:\users\thesi\documents\bitbucket\redes2020\servidor\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
@@ -19,7 +32,30 @@
 	<ctime>
 	<sstream>
 
-1603229499 source:c:\users\thesi\documents\bitbucket\redes2020\servidor\main.cpp
+1603765001 source:c:\users\thesi\documents\bitbucket\redes2020\servidorv2\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+
+1605312669 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+	<vector>
+	<istream>
+	<algorithm>
+
+1603994631 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>

@@ -1,0 +1,62 @@
+# depslib dependency file v1.0
+1605288644 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\cliente\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+	<vector>
+	<map>
+
+1603416085 source:c:\users\thesi\documents\bitbucket\redes2020\cliente\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+
+1603227359 source:c:\users\usuario\documents\unla sistemas\2-materias sistemas segundo año\algoritmos y estructuras de datos\cliente\main.cpp
+	<iostream>
+	<stdio.h>
+	<winsock2.h>
+	<windows.h>
+	<string.h>
+
+1603764416 source:c:\users\thesi\documents\bitbucket\redes2020\clientev2\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+
+1603847335 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\clientev2\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+
+1605288644 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\clientev2\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<winsock2.h>
+	<string>
+	<fstream>
+	<ctime>
+	<sstream>
+	<vector>
+	<map>
+

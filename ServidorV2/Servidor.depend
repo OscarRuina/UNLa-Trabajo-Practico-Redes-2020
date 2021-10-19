@@ -39,7 +39,7 @@
 	<ctime>
 	<sstream>
 
-1604112614 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
+1605839697 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
@@ -49,8 +49,11 @@
 	<ctime>
 	<sstream>
 	<vector>
+	<istream>
+	<algorithm>
+	<cstdio>
 
-1604153338 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
+1603994631 source:c:\users\usuario\documents\github\trabajo-practico-redes-2020\servidorv2\main.cpp
 	<iostream>
 	<stdio.h>
 	<stdlib.h>
@@ -59,5 +62,4 @@
 	<fstream>
 	<ctime>
 	<sstream>
-	<vector>
 

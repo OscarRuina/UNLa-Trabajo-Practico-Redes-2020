@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1605818572 source:c:\users\znico\onedrive\documents\github\trabajo-practico-redes-2020\aplicacionservicios\main.cpp
+	<iostream>
+	<stdio.h>
+	<stdlib.h>
+	<string>
+	<fstream>
+	<vector>
+	<istream>
+	<sstream>
+
